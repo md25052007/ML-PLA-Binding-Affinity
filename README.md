@@ -48,6 +48,10 @@ Our custom pipeline pushed a T4 GPU cluster on Kaggle for roughly 140 Epochs, st
  ┃ ┣ 📜 plot.py               <- Parses text files to generate the graphs
  ┃ ┗ 📜 preprocess_custom.py  <- RDKit Data Extractor (PDB/SDF -> DGL Graphs)
  ┃
+ ┣ 📂 src/                    <- BUG-FIXED ML-PLA SOURCE CODE
+ ┃ ┣ 📜 prediction.py         <- Fixed evaluation script pointing accurately to 2016
+ ┃ ┗ 📂 trainer/              <- Contains train.py with our Kaggle loop indexing patches
+ ┃
  ┣ 📜 .gitignore
  ┣ 📜 README.md
  ┗ 📜 requirements.txt
@@ -73,10 +77,10 @@ python scripts/preprocess_custom.py
 ```
 
 ### 3. Running a Prediction
-1. Ensure you have cloned the original ML-PLA architecture repo alongside this one.
-2. Move `/models/dti_model.pth` and `/models/vae_model.ckpt` into your `model_save` test directory.
-3. Update paths in `prediction.py`.
-4. Run:
+1. We have included our patched version of the ML-PLA architecture directly inside the `/src/` folder.
+2. Ensure you place the extracted 2016 Graph binaries into `src/data/binding_affinity/test2016/graph_ls_path`.
+3. Move `dti_model.pth` and `vae_model.ckpt` from the `/models/` folder into `src/model_save/bestmodel/DTI/` and `src/model_save/bestmodel/VAE/` respectively.
+4. From within the `src` directory, run:
 ```bash
 python prediction.py
 ```
