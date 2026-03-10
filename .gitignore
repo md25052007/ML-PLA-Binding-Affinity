@@ -1,0 +1,27 @@
+# General Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.env
+
+# Large Data files (Must be ignored for GitHub)
+*.tar.gz
+*.zip
+*.bin
+*.sdf
+*.mol2
+*.pdb
+
+# Local directories we created during testing outside this folder
+ML-PLA/
+data/
+v2016/
+
+# Temporary OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

@@ -1,0 +1,23 @@
+# Required exact versions (Requires Python 3.10)
+--extra-index-url https://download.pytorch.org/whl/cu113
+torch==1.12.1+cu113
+torchvision==0.13.1+cu113
+
+# DGL setup
+--extra-index-url https://data.dgl.ai/wheels/cu113/repo.html
+dgl==1.0.1+cu113
+
+# Chemistry and Graphing
+dgllife==0.3.2 
+rdkit-pypi
+biopython 
+scipy 
+scikit-learn
+
+# General Utils
+pandas
+numpy
+matplotlib
+pyyaml 
+tqdm
+prefetch_generator
