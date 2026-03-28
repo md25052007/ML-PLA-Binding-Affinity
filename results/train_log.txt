@@ -1,853 +1,395 @@
 Loading previously saved residue dgl graphs...
-[0;30;43m Pre-training VQ-VAE | Epoch: 1, Batch: 0 | Train Loss: 1.82080 | 0.00759 0.65063 1.17083[0m
-[0;30;43m Pre-training VQ-VAE | Epoch: 11, Batch: 0 | Train Loss: 0.08196 | 0.00403 0.04772 0.03042[0m
-[0;30;43m Pre-training VQ-VAE | Epoch: 21, Batch: 0 | Train Loss: 0.07429 | 0.00316 0.04568 0.02563[0m
-[0;30;43m Pre-training VQ-VAE | Epoch: 31, Batch: 0 | Train Loss: 0.06145 | 0.00324 0.04164 0.01669[0m
-[0;30;43m Pre-training VQ-VAE | Epoch: 41, Batch: 0 | Train Loss: 0.06784 | 0.00331 0.04319 0.02149[0m
-[0;30;43m Pre-training VQ-VAE | Epoch: 51, Batch: 0 | Train Loss: 0.06151 | 0.00334 0.04059 0.01770[0m
+[0;30;43m Pre-training VQ-VAE | Epoch: 1,  Batch: 0 | Train Loss: 1.82080 | 0.00759 0.65063 1.17083[0m
+[0;30;43m Pre-training VQ-VAE | Epoch: 11, Batch: 0 | Train Loss: 0.07513 | 0.00329 0.05143 0.02056[0m
+[0;30;43m Pre-training VQ-VAE | Epoch: 21, Batch: 0 | Train Loss: 0.06470 | 0.00324 0.04287 0.01872[0m
+[0;30;43m Pre-training VQ-VAE | Epoch: 31, Batch: 0 | Train Loss: 0.06180 | 0.00316 0.04161 0.01715[0m
+[0;30;43m Pre-training VQ-VAE | Epoch: 41, Batch: 0 | Train Loss: 0.06634 | 0.00328 0.04128 0.02193[0m
+[0;30;43m Pre-training VQ-VAE | Epoch: 51, Batch: 0 | Train Loss: 0.06394 | 0.00329 0.04141 0.01937[0m
 Loading previously saved dgl graphs and corresponding data...
 Loading previously saved dgl graphs and corresponding data...
 Loading previously saved dgl graphs and corresponding data...
 the number of train data: 11904
 the number of valid data: 1000
 the number of test data: 285
-number of parameters :  8708158
-DTIPredictor(
-  (liga_conv): ModifiedAttentiveFPPredictorV2(
-    (gnn): ModifiedAttentiveFPGNNV2(
-      (init_context): GetContext(
-        (project_node): Sequential(
-          (0): Linear(in_features=40, out_features=256, bias=True)
-          (1): LeakyReLU(negative_slope=0.01)
-        )
-        (project_edge1): Sequential(
-          (0): Linear(in_features=61, out_features=256, bias=True)
-          (1): LeakyReLU(negative_slope=0.01)
-        )
-        (project_edge2): Sequential(
-          (0): Dropout(p=0.0006281735692569256, inplace=False)
-          (1): Linear(in_features=512, out_features=1, bias=True)
-          (2): LeakyReLU(negative_slope=0.01)
-        )
-        (attentive_gru): AttentiveGRU1(
-          (edge_transform): Sequential(
-            (0): Dropout(p=0.0006281735692569256, inplace=False)
-            (1): Linear(in_features=256, out_features=256, bias=True)
-          )
-          (gru): GRUCell(256, 256)
-        )
-      )
-      (gnn_layers): ModuleList(
-        (0): GNNLayer(
-          (project_edge): Sequential(
-            (0): Dropout(p=0.0006281735692569256, inplace=False)
-            (1): Linear(in_features=512, out_features=1, bias=True)
-            (2): LeakyReLU(negative_slope=0.01)
-          )
-          (attentive_gru): AttentiveGRU2(
-            (project_node): Sequential(
-              (0): Dropout(p=0.0006281735692569256, inplace=False)
-              (1): Linear(in_features=256, out_features=256, bias=True)
-            )
-            (gru): GRUCell(256, 256)
-          )
-          (bn_layer): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-        )
-      )
-      (na_layers): ModuleList(
-        (0-1): 2 x VirtualAtom(
-          (pre_residual): ResidualLayer(
-            (dense_mlp): Sequential(
-              (0): Dense(
-                (linear): Linear(in_features=256, out_features=256, bias=False)
-                (_activation): ScaledSiLU(
-                  (_activation): SiLU()
-                )
-              )
-              (1): Dense(
-                (linear): Linear(in_features=256, out_features=256, bias=False)
-                (_activation): ScaledSiLU(
-                  (_activation): SiLU()
-                )
-              )
-            )
-          )
-          (linear_heads): ModuleList(
-            (0): Dense(
-              (linear): Linear(in_features=256, out_features=256, bias=False)
-              (_activation): ScaledSiLU(
-                (_activation): SiLU()
-              )
-            )
-            (1-3): 3 x ResidualLayer(
-              (dense_mlp): Sequential(
-                (0): Dense(
-                  (linear): Linear(in_features=256, out_features=256, bias=False)
-                  (_activation): ScaledSiLU(
-                    (_activation): SiLU()
-                  )
-                )
-                (1): Dense(
-                  (linear): Linear(in_features=256, out_features=256, bias=False)
-                  (_activation): ScaledSiLU(
-                    (_activation): SiLU()
-                  )
-                )
-              )
-            )
-          )
-          (proj_layer): Porjecting(
-            (mab): BaseMHA(
-              (fc_q): Linear(in_features=256, out_features=256, bias=True)
-              (layer_k): Linear(in_features=256, out_features=256, bias=True)
-              (layer_v): Linear(in_features=256, out_features=256, bias=True)
-              (ln0): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-              (ln1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-              (fc_o): Linear(in_features=256, out_features=256, bias=True)
-            )
-          )
-          (interaction_layer): Exchanging(
-            (mab): BaseMHA(
-              (fc_q): Linear(in_features=256, out_features=256, bias=True)
-              (layer_k): Linear(in_features=256, out_features=256, bias=True)
-              (layer_v): Linear(in_features=256, out_features=256, bias=True)
-              (ln0): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-              (ln1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-              (fc_o): Linear(in_features=256, out_features=256, bias=True)
-            )
-          )
-        )
-      )
-    )
-  )
-  (prot_conv): ModifiedAttentiveFPPredictorV2(
-    (gnn): ModifiedAttentiveFPGNNV2(
-      (init_context): GetContext(
-        (project_node): Sequential(
-          (0): Linear(in_features=40, out_features=256, bias=True)
-          (1): LeakyReLU(negative_slope=0.01)
-        )
-        (project_edge1): Sequential(
-          (0): Linear(in_features=61, out_features=256, bias=True)
-          (1): LeakyReLU(negative_slope=0.01)
-        )
-        (project_edge2): Sequential(
-          (0): Dropout(p=0.0006281735692569256, inplace=False)
-          (1): Linear(in_features=512, out_features=1, bias=True)
-          (2): LeakyReLU(negative_slope=0.01)
-        )
-        (attentive_gru): AttentiveGRU1(
-          (edge_transform): Sequential(
-            (0): Dropout(p=0.0006281735692569256, inplace=False)
-            (1): Linear(in_features=256, out_features=256, bias=True)
-          )
-          (gru): GRUCell(256, 256)
-        )
-      )
-      (gnn_layers): ModuleList(
-        (0): GNNLayer(
-          (project_edge): Sequential(
-            (0): Dropout(p=0.0006281735692569256, inplace=False)
-            (1): Linear(in_features=512, out_features=1, bias=True)
-            (2): LeakyReLU(negative_slope=0.01)
-          )
-          (attentive_gru): AttentiveGRU2(
-            (project_node): Sequential(
-              (0): Dropout(p=0.0006281735692569256, inplace=False)
-              (1): Linear(in_features=256, out_features=256, bias=True)
-            )
-            (gru): GRUCell(256, 256)
-          )
-          (bn_layer): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-        )
-      )
-      (na_layers): ModuleList(
-        (0-1): 2 x VirtualAtom(
-          (pre_residual): ResidualLayer(
-            (dense_mlp): Sequential(
-              (0): Dense(
-                (linear): Linear(in_features=256, out_features=256, bias=False)
-                (_activation): ScaledSiLU(
-                  (_activation): SiLU()
-                )
-              )
-              (1): Dense(
-                (linear): Linear(in_features=256, out_features=256, bias=False)
-                (_activation): ScaledSiLU(
-                  (_activation): SiLU()
-                )
-              )
-            )
-          )
-          (linear_heads): ModuleList(
-            (0): Dense(
-              (linear): Linear(in_features=256, out_features=256, bias=False)
-              (_activation): ScaledSiLU(
-                (_activation): SiLU()
-              )
-            )
-            (1-3): 3 x ResidualLayer(
-              (dense_mlp): Sequential(
-                (0): Dense(
-                  (linear): Linear(in_features=256, out_features=256, bias=False)
-                  (_activation): ScaledSiLU(
-                    (_activation): SiLU()
-                  )
-                )
-                (1): Dense(
-                  (linear): Linear(in_features=256, out_features=256, bias=False)
-                  (_activation): ScaledSiLU(
-                    (_activation): SiLU()
-                  )
-                )
-              )
-            )
-          )
-          (proj_layer): Porjecting(
-            (mab): BaseMHA(
-              (fc_q): Linear(in_features=256, out_features=256, bias=True)
-              (layer_k): Linear(in_features=256, out_features=256, bias=True)
-              (layer_v): Linear(in_features=256, out_features=256, bias=True)
-              (ln0): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-              (ln1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-              (fc_o): Linear(in_features=256, out_features=256, bias=True)
-            )
-          )
-          (interaction_layer): Exchanging(
-            (mab): BaseMHA(
-              (fc_q): Linear(in_features=256, out_features=256, bias=True)
-              (layer_k): Linear(in_features=256, out_features=256, bias=True)
-              (layer_v): Linear(in_features=256, out_features=256, bias=True)
-              (ln0): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-              (ln1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-              (fc_o): Linear(in_features=256, out_features=256, bias=True)
-            )
-          )
-        )
-      )
-    )
-  )
-  (residue_embedding_fc): Sequential(
-    (0): Linear(in_features=512, out_features=256, bias=True)
-    (1): ReLU()
-    (2): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-  )
-  (noncov_graph): DTIConvGraph3Layer(
-    (grah_conv): DTIConvGraph3(
-      (mpl): Sequential(
-        (0): Linear(in_features=257, out_features=128, bias=True)
-        (1): LeakyReLU(negative_slope=0.01)
-        (2): Linear(in_features=128, out_features=128, bias=True)
-        (3): LeakyReLU(negative_slope=0.01)
-        (4): Linear(in_features=128, out_features=128, bias=True)
-        (5): LeakyReLU(negative_slope=0.01)
-      )
-      (nablock): ModuleList(
-        (0-1): 2 x VirtualAtom(
-          (pre_residual): ResidualLayer(
-            (dense_mlp): Sequential(
-              (0): Dense(
-                (linear): Linear(in_features=256, out_features=256, bias=False)
-                (_activation): ScaledSiLU(
-                  (_activation): SiLU()
-                )
-              )
-              (1): Dense(
-                (linear): Linear(in_features=256, out_features=256, bias=False)
-                (_activation): ScaledSiLU(
-                  (_activation): SiLU()
-                )
-              )
-            )
-          )
-          (linear_heads): ModuleList(
-            (0): Dense(
-              (linear): Linear(in_features=256, out_features=256, bias=False)
-              (_activation): ScaledSiLU(
-                (_activation): SiLU()
-              )
-            )
-            (1): ResidualLayer(
-              (dense_mlp): Sequential(
-                (0): Dense(
-                  (linear): Linear(in_features=256, out_features=256, bias=False)
-                  (_activation): ScaledSiLU(
-                    (_activation): SiLU()
-                  )
-                )
-                (1): Dense(
-                  (linear): Linear(in_features=256, out_features=256, bias=False)
-                  (_activation): ScaledSiLU(
-                    (_activation): SiLU()
-                  )
-                )
-              )
-            )
-          )
-          (proj_layer): Porjecting(
-            (mab): BaseMHA(
-              (fc_q): Linear(in_features=256, out_features=256, bias=True)
-              (layer_k): Linear(in_features=256, out_features=256, bias=True)
-              (layer_v): Linear(in_features=256, out_features=256, bias=True)
-              (ln0): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-              (ln1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-              (fc_o): Linear(in_features=256, out_features=256, bias=True)
-            )
-          )
-          (interaction_layer): Exchanging(
-            (mab): BaseMHA(
-              (fc_q): Linear(in_features=256, out_features=256, bias=True)
-              (layer_k): Linear(in_features=256, out_features=256, bias=True)
-              (layer_v): Linear(in_features=256, out_features=256, bias=True)
-              (ln0): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-              (ln1): LayerNorm((256,), eps=1e-05, elementwise_affine=True)
-              (fc_o): Linear(in_features=256, out_features=256, bias=True)
-            )
-          )
-        )
-      )
-      (convs): ModuleList(
-        (0-1): 2 x SAGEConv(
-          (feat_drop): Dropout(p=0.0, inplace=False)
-          (fc_neigh): Linear(in_features=256, out_features=256, bias=False)
-          (fc_self): Linear(in_features=256, out_features=256, bias=True)
-        )
-      )
-    )
-    (dropout): Dropout(p=0.0006281735692569256, inplace=False)
-    (bn_layer): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-  )
-  (FC): FC(
-    (predict): ModuleList(
-      (0): Linear(in_features=512, out_features=200, bias=True)
-      (1): Dropout(p=0.0006281735692569256, inplace=False)
-      (2): LeakyReLU(negative_slope=0.01)
-      (3): BatchNorm1d(200, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-      (4): Linear(in_features=200, out_features=200, bias=True)
-      (5): Dropout(p=0.0006281735692569256, inplace=False)
-      (6): LeakyReLU(negative_slope=0.01)
-      (7): BatchNorm1d(200, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-      (8): Linear(in_features=200, out_features=1, bias=True)
-    )
-  )
-  (readout): EdgeWeightedSumAndMax(
-    (weight_and_sum): EdgeWeightAndSum(
-      (atom_weighting): Sequential(
-        (0): Linear(in_features=128, out_features=1, bias=True)
-        (1): Tanh()
-      )
-    )
-  )
-)
-epoch: 0  loss: 41.53121533957861
-epoch:0 	 train_rmse:6.4077 	 valid_rmse:6.4335 	 time:73.884 s
-epoch: 1  loss: 37.14123168042911
-epoch:1 	 train_rmse:6.0338 	 valid_rmse:6.1472 	 time:71.425 s
-epoch: 2  loss: 29.300046961794617
-epoch:2 	 train_rmse:5.4695 	 valid_rmse:5.5850 	 time:71.330 s
-epoch: 3  loss: 19.192217488442697
-epoch:3 	 train_rmse:3.7261 	 valid_rmse:3.7926 	 time:71.428 s
-epoch: 4  loss: 10.248092641112624
-epoch:4 	 train_rmse:2.6057 	 valid_rmse:2.6746 	 time:71.192 s
-epoch: 5  loss: 4.844400321283648
-epoch:5 	 train_rmse:1.7353 	 valid_rmse:1.8184 	 time:71.267 s
-epoch: 6  loss: 2.6158687196752077
-epoch:6 	 train_rmse:1.3886 	 valid_rmse:1.4676 	 time:71.251 s
-epoch: 7  loss: 1.9825047434017222
-EarlyStopping counter: 1 out of 100 best val: 1.4676
-epoch:7 	 train_rmse:1.4424 	 valid_rmse:1.5139 	 time:71.279 s
-epoch: 8  loss: 1.8583865780984201
-epoch:8 	 train_rmse:1.3504 	 valid_rmse:1.4288 	 time:71.380 s
-epoch: 9  loss: 1.7488758589631768
-EarlyStopping counter: 1 out of 100 best val: 1.4288
-epoch:9 	 train_rmse:1.4627 	 valid_rmse:1.5570 	 time:71.380 s
-epoch: 10  loss: 1.6553631162130704
-EarlyStopping counter: 2 out of 100 best val: 1.4288
-epoch:10 	 train_rmse:1.3161 	 valid_rmse:1.4309 	 time:71.415 s
-epoch: 11  loss: 1.596788191026257
-EarlyStopping counter: 3 out of 100 best val: 1.4288
-epoch:11 	 train_rmse:1.2915 	 valid_rmse:1.4963 	 time:71.105 s
-epoch: 12  loss: 1.54807335458776
-epoch:12 	 train_rmse:1.2725 	 valid_rmse:1.3731 	 time:71.395 s
-epoch: 13  loss: 1.5237469532156502
-EarlyStopping counter: 1 out of 100 best val: 1.3731
-epoch:13 	 train_rmse:1.2355 	 valid_rmse:1.4134 	 time:72.940 s
-epoch: 14  loss: 1.5180830071049352
-EarlyStopping counter: 2 out of 100 best val: 1.3731
-epoch:14 	 train_rmse:1.2295 	 valid_rmse:1.3902 	 time:71.359 s
-epoch: 15  loss: 1.4554861501980854
-EarlyStopping counter: 3 out of 100 best val: 1.3731
-epoch:15 	 train_rmse:1.2209 	 valid_rmse:1.4056 	 time:71.373 s
-epoch: 16  loss: 1.428013095932622
-epoch:16 	 train_rmse:1.1510 	 valid_rmse:1.3642 	 time:71.482 s
-epoch: 17  loss: 1.3552273114522297
-epoch:17 	 train_rmse:1.1618 	 valid_rmse:1.3588 	 time:71.300 s
-epoch: 18  loss: 1.3126243705390601
-epoch:18 	 train_rmse:1.1410 	 valid_rmse:1.3252 	 time:71.392 s
-epoch: 19  loss: 1.263164661263907
-EarlyStopping counter: 1 out of 100 best val: 1.3252
-epoch:19 	 train_rmse:1.1185 	 valid_rmse:1.3866 	 time:71.318 s
-epoch: 20  loss: 1.225257792139566
-epoch:20 	 train_rmse:1.0475 	 valid_rmse:1.3074 	 time:71.269 s
-epoch: 21  loss: 1.1738816063891175
-EarlyStopping counter: 1 out of 100 best val: 1.3074
-epoch:21 	 train_rmse:1.1012 	 valid_rmse:1.3634 	 time:70.980 s
-epoch: 22  loss: 1.1437386216655854
-EarlyStopping counter: 2 out of 100 best val: 1.3074
-epoch:22 	 train_rmse:1.0694 	 valid_rmse:1.3149 	 time:71.088 s
-epoch: 23  loss: 1.1423524252830013
-EarlyStopping counter: 3 out of 100 best val: 1.3074
-epoch:23 	 train_rmse:1.0765 	 valid_rmse:1.3907 	 time:71.146 s
-epoch: 24  loss: 1.089184570697046
-EarlyStopping counter: 4 out of 100 best val: 1.3074
-epoch:24 	 train_rmse:1.0718 	 valid_rmse:1.3885 	 time:71.357 s
-epoch: 25  loss: 1.0387261202258449
-EarlyStopping counter: 5 out of 100 best val: 1.3074
-epoch:25 	 train_rmse:1.0283 	 valid_rmse:1.3899 	 time:73.092 s
-epoch: 26  loss: 1.0074121554692586
-EarlyStopping counter: 6 out of 100 best val: 1.3074
-epoch:26 	 train_rmse:0.9770 	 valid_rmse:1.3399 	 time:71.335 s
-epoch: 27  loss: 0.9561000857301938
-epoch:27 	 train_rmse:0.9205 	 valid_rmse:1.2874 	 time:71.504 s
-epoch: 28  loss: 0.9272152999395965
-EarlyStopping counter: 1 out of 100 best val: 1.2874
-epoch:28 	 train_rmse:0.9974 	 valid_rmse:1.3718 	 time:71.176 s
-epoch: 29  loss: 0.9149098851347482
-EarlyStopping counter: 2 out of 100 best val: 1.2874
-epoch:29 	 train_rmse:1.0127 	 valid_rmse:1.3774 	 time:71.427 s
-epoch: 30  loss: 0.8835724547345151
-EarlyStopping counter: 3 out of 100 best val: 1.2874
-epoch:30 	 train_rmse:0.9062 	 valid_rmse:1.3362 	 time:71.388 s
-epoch: 31  loss: 0.8326496597259275
-EarlyStopping counter: 4 out of 100 best val: 1.2874
-epoch:31 	 train_rmse:0.8955 	 valid_rmse:1.3075 	 time:71.358 s
-epoch: 32  loss: 0.838753560537933
-EarlyStopping counter: 5 out of 100 best val: 1.2874
-epoch:32 	 train_rmse:0.9558 	 valid_rmse:1.3577 	 time:71.290 s
-epoch: 33  loss: 0.8041038647774728
-EarlyStopping counter: 6 out of 100 best val: 1.2874
-epoch:33 	 train_rmse:0.8870 	 valid_rmse:1.3195 	 time:71.366 s
-epoch: 34  loss: 0.7665119142301621
-EarlyStopping counter: 7 out of 100 best val: 1.2874
-epoch:34 	 train_rmse:0.8619 	 valid_rmse:1.3537 	 time:71.252 s
-epoch: 35  loss: 0.747880345711144
-EarlyStopping counter: 8 out of 100 best val: 1.2874
-epoch:35 	 train_rmse:0.8681 	 valid_rmse:1.3431 	 time:71.293 s
-epoch: 36  loss: 0.7182953739038078
-EarlyStopping counter: 9 out of 100 best val: 1.2874
-epoch:36 	 train_rmse:0.8715 	 valid_rmse:1.3362 	 time:71.296 s
-epoch: 37  loss: 0.6931953628857931
-EarlyStopping counter: 10 out of 100 best val: 1.2874
-epoch:37 	 train_rmse:0.9131 	 valid_rmse:1.3248 	 time:71.451 s
-epoch: 38  loss: 0.6707686432587203
-EarlyStopping counter: 11 out of 100 best val: 1.2874
-epoch:38 	 train_rmse:0.8132 	 valid_rmse:1.3373 	 time:71.730 s
-epoch: 39  loss: 0.6500117086595104
-EarlyStopping counter: 12 out of 100 best val: 1.2874
-epoch:39 	 train_rmse:0.8392 	 valid_rmse:1.3195 	 time:71.164 s
-epoch: 40  loss: 0.6244609775722668
-EarlyStopping counter: 13 out of 100 best val: 1.2874
-epoch:40 	 train_rmse:0.8312 	 valid_rmse:1.3359 	 time:71.251 s
-epoch: 41  loss: 0.6287472978714974
-epoch:41 	 train_rmse:0.7478 	 valid_rmse:1.2787 	 time:72.834 s
-epoch: 42  loss: 0.5880785055698887
-EarlyStopping counter: 1 out of 100 best val: 1.2787
-epoch:42 	 train_rmse:0.8295 	 valid_rmse:1.3413 	 time:71.514 s
-epoch: 43  loss: 0.609023311766245
-EarlyStopping counter: 2 out of 100 best val: 1.2787
-epoch:43 	 train_rmse:0.7968 	 valid_rmse:1.3259 	 time:71.278 s
-epoch: 44  loss: 0.5517058545543302
-EarlyStopping counter: 3 out of 100 best val: 1.2787
-epoch:44 	 train_rmse:0.7090 	 valid_rmse:1.3251 	 time:71.231 s
-epoch: 45  loss: 0.5290756187131328
-EarlyStopping counter: 4 out of 100 best val: 1.2787
-epoch:45 	 train_rmse:0.6892 	 valid_rmse:1.2950 	 time:71.291 s
-epoch: 46  loss: 0.5213726643593081
-EarlyStopping counter: 5 out of 100 best val: 1.2787
-epoch:46 	 train_rmse:0.7192 	 valid_rmse:1.3450 	 time:71.556 s
-epoch: 47  loss: 0.49444134709655596
-EarlyStopping counter: 6 out of 100 best val: 1.2787
-epoch:47 	 train_rmse:0.7437 	 valid_rmse:1.3479 	 time:71.211 s
-epoch: 48  loss: 0.5062934769097195
-EarlyStopping counter: 7 out of 100 best val: 1.2787
-epoch:48 	 train_rmse:0.6765 	 valid_rmse:1.2978 	 time:71.292 s
-epoch: 49  loss: 0.49102849697553985
-EarlyStopping counter: 8 out of 100 best val: 1.2787
-epoch:49 	 train_rmse:0.6693 	 valid_rmse:1.3295 	 time:71.257 s
-epoch: 50  loss: 0.4598178735343359
-EarlyStopping counter: 9 out of 100 best val: 1.2787
-epoch:50 	 train_rmse:0.6181 	 valid_rmse:1.2875 	 time:71.214 s
-epoch: 51  loss: 0.4615141627609089
-epoch:51 	 train_rmse:0.6304 	 valid_rmse:1.2743 	 time:71.501 s
-epoch: 52  loss: 0.45664184484430537
-EarlyStopping counter: 1 out of 100 best val: 1.2743
-epoch:52 	 train_rmse:0.6731 	 valid_rmse:1.3185 	 time:71.129 s
-epoch: 53  loss: 0.47345250524500365
-EarlyStopping counter: 2 out of 100 best val: 1.2743
-epoch:53 	 train_rmse:0.7195 	 valid_rmse:1.3506 	 time:70.762 s
-epoch: 54  loss: 0.4595099665144438
-EarlyStopping counter: 3 out of 100 best val: 1.2743
-epoch:54 	 train_rmse:0.6102 	 valid_rmse:1.3120 	 time:70.968 s
-epoch: 55  loss: 0.4398291117401533
-epoch:55 	 train_rmse:0.6069 	 valid_rmse:1.2703 	 time:72.907 s
-epoch: 56  loss: 0.42532063620064847
-EarlyStopping counter: 1 out of 100 best val: 1.2703
-epoch:56 	 train_rmse:0.6336 	 valid_rmse:1.2821 	 time:71.353 s
-epoch: 57  loss: 0.40702122866466484
-EarlyStopping counter: 2 out of 100 best val: 1.2703
-epoch:57 	 train_rmse:0.6342 	 valid_rmse:1.3018 	 time:71.059 s
-epoch: 58  loss: 0.42211667920953483
-EarlyStopping counter: 3 out of 100 best val: 1.2703
-epoch:58 	 train_rmse:0.6444 	 valid_rmse:1.3028 	 time:71.303 s
-epoch: 59  loss: 0.38429049074008903
-EarlyStopping counter: 4 out of 100 best val: 1.2703
-epoch:59 	 train_rmse:0.6053 	 valid_rmse:1.2846 	 time:71.031 s
-epoch: 60  loss: 0.3726104042863333
-EarlyStopping counter: 5 out of 100 best val: 1.2703
-epoch:60 	 train_rmse:0.6037 	 valid_rmse:1.2968 	 time:72.561 s
-epoch: 61  loss: 0.38450720649893566
-epoch:61 	 train_rmse:0.5546 	 valid_rmse:1.2478 	 time:74.807 s
-epoch: 62  loss: 0.3590128634886075
-EarlyStopping counter: 1 out of 100 best val: 1.2478
-epoch:62 	 train_rmse:0.6094 	 valid_rmse:1.2937 	 time:74.832 s
-epoch: 63  loss: 0.36584138245351855
-EarlyStopping counter: 2 out of 100 best val: 1.2478
-epoch:63 	 train_rmse:0.6891 	 valid_rmse:1.5023 	 time:73.697 s
-epoch: 64  loss: 0.35331183319450704
-EarlyStopping counter: 3 out of 100 best val: 1.2478
-epoch:64 	 train_rmse:0.6360 	 valid_rmse:1.3017 	 time:74.733 s
-epoch: 65  loss: 0.3463405554973951
-EarlyStopping counter: 4 out of 100 best val: 1.2478
-epoch:65 	 train_rmse:0.5621 	 valid_rmse:1.2824 	 time:74.664 s
-epoch: 66  loss: 0.3538871524474954
-EarlyStopping counter: 5 out of 100 best val: 1.2478
-epoch:66 	 train_rmse:0.5390 	 valid_rmse:1.2676 	 time:74.009 s
-epoch: 67  loss: 0.3454303467465985
-EarlyStopping counter: 6 out of 100 best val: 1.2478
-epoch:67 	 train_rmse:0.5704 	 valid_rmse:1.3252 	 time:72.668 s
-epoch: 68  loss: 0.3514288048590383
-EarlyStopping counter: 7 out of 100 best val: 1.2478
-epoch:68 	 train_rmse:0.5430 	 valid_rmse:1.3054 	 time:77.316 s
-epoch: 69  loss: 0.3455048596025795
-EarlyStopping counter: 8 out of 100 best val: 1.2478
-epoch:69 	 train_rmse:0.6536 	 valid_rmse:1.3162 	 time:76.164 s
-epoch: 70  loss: 0.3517142189766771
-EarlyStopping counter: 9 out of 100 best val: 1.2478
-epoch:70 	 train_rmse:0.5549 	 valid_rmse:1.2826 	 time:76.296 s
-epoch: 71  loss: 0.3441078842327159
-EarlyStopping counter: 10 out of 100 best val: 1.2478
-epoch:71 	 train_rmse:0.5199 	 valid_rmse:1.2956 	 time:76.477 s
-epoch: 72  loss: 0.32972769903880295
-EarlyStopping counter: 11 out of 100 best val: 1.2478
-epoch:72 	 train_rmse:0.6214 	 valid_rmse:1.2939 	 time:76.275 s
-epoch: 73  loss: 0.33453355729579926
-EarlyStopping counter: 12 out of 100 best val: 1.2478
-epoch:73 	 train_rmse:0.5765 	 valid_rmse:1.2967 	 time:72.569 s
-epoch: 74  loss: 0.3246474658609718
-EarlyStopping counter: 13 out of 100 best val: 1.2478
-epoch:74 	 train_rmse:0.5634 	 valid_rmse:1.2912 	 time:72.823 s
-epoch: 75  loss: 0.321719515708185
-EarlyStopping counter: 14 out of 100 best val: 1.2478
-epoch:75 	 train_rmse:0.5113 	 valid_rmse:1.2614 	 time:72.352 s
-epoch: 76  loss: 0.30214737596050384
-EarlyStopping counter: 15 out of 100 best val: 1.2478
-epoch:76 	 train_rmse:0.5531 	 valid_rmse:1.2958 	 time:72.615 s
-epoch: 77  loss: 0.2989770747641081
-EarlyStopping counter: 16 out of 100 best val: 1.2478
-epoch:77 	 train_rmse:0.5638 	 valid_rmse:1.2705 	 time:72.441 s
-epoch: 78  loss: 0.2950467832626835
-EarlyStopping counter: 17 out of 100 best val: 1.2478
-epoch:78 	 train_rmse:0.5166 	 valid_rmse:1.2841 	 time:71.977 s
-epoch: 79  loss: 0.3089404892857357
-EarlyStopping counter: 18 out of 100 best val: 1.2478
-epoch:79 	 train_rmse:0.5745 	 valid_rmse:1.2995 	 time:71.914 s
-epoch: 80  loss: 0.32112264937611035
-EarlyStopping counter: 19 out of 100 best val: 1.2478
-epoch:80 	 train_rmse:0.5665 	 valid_rmse:1.2804 	 time:72.441 s
-epoch: 81  loss: 0.3220681599391404
-EarlyStopping counter: 20 out of 100 best val: 1.2478
-epoch:81 	 train_rmse:0.5191 	 valid_rmse:1.2675 	 time:72.938 s
-epoch: 82  loss: 0.2928047487812658
-EarlyStopping counter: 21 out of 100 best val: 1.2478
-epoch:82 	 train_rmse:0.4787 	 valid_rmse:1.2560 	 time:73.629 s
-epoch: 83  loss: 0.28161223408996416
-EarlyStopping counter: 22 out of 100 best val: 1.2478
-epoch:83 	 train_rmse:0.4974 	 valid_rmse:1.2745 	 time:72.247 s
-epoch: 84  loss: 0.28501279059276785
-EarlyStopping counter: 23 out of 100 best val: 1.2478
-epoch:84 	 train_rmse:0.5321 	 valid_rmse:1.2571 	 time:72.438 s
-epoch: 85  loss: 0.3036768691193673
-EarlyStopping counter: 24 out of 100 best val: 1.2478
-epoch:85 	 train_rmse:0.5180 	 valid_rmse:1.2842 	 time:73.287 s
-epoch: 86  loss: 0.2789923910812665
-EarlyStopping counter: 25 out of 100 best val: 1.2478
-epoch:86 	 train_rmse:0.5110 	 valid_rmse:1.2861 	 time:73.418 s
-epoch: 87  loss: 0.2984382309900817
-EarlyStopping counter: 26 out of 100 best val: 1.2478
-epoch:87 	 train_rmse:0.5326 	 valid_rmse:1.2940 	 time:76.325 s
-epoch: 88  loss: 0.2915659984273295
-EarlyStopping counter: 27 out of 100 best val: 1.2478
-epoch:88 	 train_rmse:0.4869 	 valid_rmse:1.2692 	 time:74.977 s
-epoch: 89  loss: 0.2791343206359494
-EarlyStopping counter: 28 out of 100 best val: 1.2478
-epoch:89 	 train_rmse:0.4974 	 valid_rmse:1.2667 	 time:72.963 s
-epoch: 90  loss: 0.2860553227765586
-EarlyStopping counter: 29 out of 100 best val: 1.2478
-epoch:90 	 train_rmse:0.5499 	 valid_rmse:1.2975 	 time:73.420 s
-epoch: 91  loss: 0.2827099439918354
-EarlyStopping counter: 30 out of 100 best val: 1.2478
-epoch:91 	 train_rmse:0.4729 	 valid_rmse:1.2810 	 time:73.739 s
-epoch: 92  loss: 0.2625163931359527
-EarlyStopping counter: 31 out of 100 best val: 1.2478
-epoch:92 	 train_rmse:0.5355 	 valid_rmse:1.2743 	 time:74.049 s
-epoch: 93  loss: 0.25468894038149104
-EarlyStopping counter: 32 out of 100 best val: 1.2478
-epoch:93 	 train_rmse:0.5493 	 valid_rmse:1.2853 	 time:73.882 s
-epoch: 94  loss: 0.2599385238142424
-EarlyStopping counter: 33 out of 100 best val: 1.2478
-epoch:94 	 train_rmse:0.4980 	 valid_rmse:1.2901 	 time:73.064 s
-epoch: 95  loss: 0.24475307890804865
-EarlyStopping counter: 34 out of 100 best val: 1.2478
-epoch:95 	 train_rmse:0.4468 	 valid_rmse:1.2564 	 time:74.237 s
-epoch: 96  loss: 0.24850524641493316
-EarlyStopping counter: 35 out of 100 best val: 1.2478
-epoch:96 	 train_rmse:0.5047 	 valid_rmse:1.2885 	 time:74.158 s
-epoch: 97  loss: 0.2704554714502827
-EarlyStopping counter: 36 out of 100 best val: 1.2478
-epoch:97 	 train_rmse:0.5032 	 valid_rmse:1.2627 	 time:73.724 s
-epoch: 98  loss: 0.2577149954534346
-EarlyStopping counter: 37 out of 100 best val: 1.2478
-epoch:98 	 train_rmse:0.4827 	 valid_rmse:1.2736 	 time:73.979 s
-epoch: 99  loss: 0.27468167229365276
-EarlyStopping counter: 38 out of 100 best val: 1.2478
-epoch:99 	 train_rmse:0.4936 	 valid_rmse:1.2639 	 time:75.799 s
-epoch: 100  loss: 0.2767412664108379
-EarlyStopping counter: 39 out of 100 best val: 1.2478
-epoch:100 	 train_rmse:0.4845 	 valid_rmse:1.2845 	 time:74.608 s
-epoch: 101  loss: 0.26904449379572304
-epoch:101 	 train_rmse:0.4556 	 valid_rmse:1.2474 	 time:74.780 s
-epoch: 102  loss: 0.2520223348852127
-EarlyStopping counter: 1 out of 100 best val: 1.2474
-epoch:102 	 train_rmse:0.4724 	 valid_rmse:1.2815 	 time:74.545 s
-epoch: 103  loss: 0.2623468076670042
-EarlyStopping counter: 2 out of 100 best val: 1.2474
-epoch:103 	 train_rmse:0.4865 	 valid_rmse:1.2515 	 time:74.014 s
-epoch: 104  loss: 0.2423270211745334
-EarlyStopping counter: 3 out of 100 best val: 1.2474
-epoch:104 	 train_rmse:0.4669 	 valid_rmse:1.2760 	 time:74.309 s
-epoch: 105  loss: 0.244250429734107
-EarlyStopping counter: 4 out of 100 best val: 1.2474
-epoch:105 	 train_rmse:0.5199 	 valid_rmse:1.2705 	 time:73.477 s
-epoch: 106  loss: 0.2567109133928053
-EarlyStopping counter: 5 out of 100 best val: 1.2474
-epoch:106 	 train_rmse:0.4613 	 valid_rmse:1.2813 	 time:74.136 s
-epoch: 107  loss: 0.2503132786481611
-EarlyStopping counter: 6 out of 100 best val: 1.2474
-epoch:107 	 train_rmse:0.4772 	 valid_rmse:1.2742 	 time:74.374 s
-epoch: 108  loss: 0.24730588367549322
-EarlyStopping counter: 7 out of 100 best val: 1.2474
-epoch:108 	 train_rmse:0.4300 	 valid_rmse:1.2679 	 time:73.927 s
-epoch: 109  loss: 0.22036027355540183
-EarlyStopping counter: 8 out of 100 best val: 1.2474
-epoch:109 	 train_rmse:0.4300 	 valid_rmse:1.2747 	 time:72.371 s
-epoch: 110  loss: 0.2283418674462585
-EarlyStopping counter: 9 out of 100 best val: 1.2474
-epoch:110 	 train_rmse:0.4617 	 valid_rmse:1.2550 	 time:72.126 s
-epoch: 111  loss: 0.2350138057303685
-EarlyStopping counter: 10 out of 100 best val: 1.2474
-epoch:111 	 train_rmse:0.5037 	 valid_rmse:1.2988 	 time:72.106 s
-epoch: 112  loss: 0.23009325163338773
-EarlyStopping counter: 11 out of 100 best val: 1.2474
-epoch:112 	 train_rmse:0.4326 	 valid_rmse:1.2561 	 time:73.362 s
-epoch: 113  loss: 0.23973519587388603
-EarlyStopping counter: 12 out of 100 best val: 1.2474
-epoch:113 	 train_rmse:0.4493 	 valid_rmse:1.2842 	 time:71.701 s
-epoch: 114  loss: 0.23112487264217868
-EarlyStopping counter: 13 out of 100 best val: 1.2474
-epoch:114 	 train_rmse:0.4446 	 valid_rmse:1.2509 	 time:72.063 s
-epoch: 115  loss: 0.22830167645087807
-EarlyStopping counter: 14 out of 100 best val: 1.2474
-epoch:115 	 train_rmse:0.4975 	 valid_rmse:1.2907 	 time:71.659 s
-epoch: 116  loss: 0.24237325274816124
-EarlyStopping counter: 15 out of 100 best val: 1.2474
-epoch:116 	 train_rmse:0.4538 	 valid_rmse:1.2842 	 time:72.007 s
-epoch: 117  loss: 0.23138810133421292
-EarlyStopping counter: 16 out of 100 best val: 1.2474
-epoch:117 	 train_rmse:0.5292 	 valid_rmse:1.3040 	 time:72.341 s
-epoch: 118  loss: 0.23539872531608869
-EarlyStopping counter: 17 out of 100 best val: 1.2474
-epoch:118 	 train_rmse:0.5135 	 valid_rmse:1.2841 	 time:71.559 s
-epoch: 119  loss: 0.24423497226289523
-EarlyStopping counter: 18 out of 100 best val: 1.2474
-epoch:119 	 train_rmse:0.4837 	 valid_rmse:1.2771 	 time:71.591 s
-epoch: 120  loss: 0.23937637222710476
-EarlyStopping counter: 19 out of 100 best val: 1.2474
-epoch:120 	 train_rmse:0.4568 	 valid_rmse:1.2870 	 time:72.977 s
-epoch: 121  loss: 0.21058041994930596
-EarlyStopping counter: 20 out of 100 best val: 1.2474
-epoch:121 	 train_rmse:0.3922 	 valid_rmse:1.2779 	 time:74.831 s
-epoch: 122  loss: 0.20035575706792133
-EarlyStopping counter: 21 out of 100 best val: 1.2474
-epoch:122 	 train_rmse:0.4722 	 valid_rmse:1.2770 	 time:74.599 s
-epoch: 123  loss: 0.21348300079504648
-EarlyStopping counter: 22 out of 100 best val: 1.2474
-epoch:123 	 train_rmse:0.4452 	 valid_rmse:1.2875 	 time:73.519 s
-epoch: 124  loss: 0.21077023366446135
-EarlyStopping counter: 23 out of 100 best val: 1.2474
-epoch:124 	 train_rmse:0.4757 	 valid_rmse:1.2579 	 time:74.639 s
-epoch: 125  loss: 0.21072561910716436
-EarlyStopping counter: 24 out of 100 best val: 1.2474
-epoch:125 	 train_rmse:0.4334 	 valid_rmse:1.2884 	 time:75.078 s
-epoch: 126  loss: 0.22230759479345813
-EarlyStopping counter: 25 out of 100 best val: 1.2474
-epoch:126 	 train_rmse:0.4147 	 valid_rmse:1.2571 	 time:73.940 s
-epoch: 127  loss: 0.21683457654009583
-EarlyStopping counter: 26 out of 100 best val: 1.2474
-epoch:127 	 train_rmse:0.4036 	 valid_rmse:1.2670 	 time:72.501 s
-epoch: 128  loss: 0.23798881006497208
-EarlyStopping counter: 27 out of 100 best val: 1.2474
-epoch:128 	 train_rmse:0.4939 	 valid_rmse:1.2904 	 time:71.995 s
-epoch: 129  loss: 0.24180890459527252
-EarlyStopping counter: 28 out of 100 best val: 1.2474
-epoch:129 	 train_rmse:0.4814 	 valid_rmse:1.2790 	 time:72.146 s
-epoch: 130  loss: 0.2195028172385308
-EarlyStopping counter: 29 out of 100 best val: 1.2474
-epoch:130 	 train_rmse:0.4450 	 valid_rmse:1.2848 	 time:73.183 s
-epoch: 131  loss: 0.20802739550990443
-EarlyStopping counter: 30 out of 100 best val: 1.2474
-epoch:131 	 train_rmse:0.5597 	 valid_rmse:1.2699 	 time:72.196 s
-epoch: 132  loss: 0.2186252836097953
-EarlyStopping counter: 31 out of 100 best val: 1.2474
-epoch:132 	 train_rmse:0.4268 	 valid_rmse:1.2492 	 time:71.992 s
-epoch: 133  loss: 0.20382796780716989
-EarlyStopping counter: 32 out of 100 best val: 1.2474
-epoch:133 	 train_rmse:0.4816 	 valid_rmse:1.2591 	 time:72.057 s
-epoch: 134  loss: 0.1999991089105606
-EarlyStopping counter: 33 out of 100 best val: 1.2474
-epoch:134 	 train_rmse:0.4442 	 valid_rmse:1.2673 	 time:72.002 s
-epoch: 135  loss: 0.2155971655281641
-epoch:135 	 train_rmse:0.3986 	 valid_rmse:1.2454 	 time:72.289 s
-epoch: 136  loss: 0.20546733107297652
-EarlyStopping counter: 1 out of 100 best val: 1.2454
-epoch:136 	 train_rmse:0.3973 	 valid_rmse:1.2491 	 time:72.011 s
-epoch: 137  loss: 0.19709988330961556
-EarlyStopping counter: 2 out of 100 best val: 1.2454
-epoch:137 	 train_rmse:0.4113 	 valid_rmse:1.2719 	 time:72.381 s
-epoch: 138  loss: 0.20022685465312773
-EarlyStopping counter: 3 out of 100 best val: 1.2454
-epoch:138 	 train_rmse:0.4139 	 valid_rmse:1.2506 	 time:72.049 s
-epoch: 139  loss: 0.19459989530745372
-EarlyStopping counter: 4 out of 100 best val: 1.2454
-epoch:139 	 train_rmse:0.4508 	 valid_rmse:1.2670 	 time:71.395 s
-epoch: 140  loss: 0.20123683260653608
-EarlyStopping counter: 5 out of 100 best val: 1.2454
-epoch:140 	 train_rmse:0.4553 	 valid_rmse:1.2906 	 time:70.688 s
-epoch: 141  loss: 0.20392805418019655
-EarlyStopping counter: 6 out of 100 best val: 1.2454
-epoch:141 	 train_rmse:0.4530 	 valid_rmse:1.2745 	 time:71.003 s
-epoch: 142  loss: 0.21069724953943683
-EarlyStopping counter: 7 out of 100 best val: 1.2454
-epoch:142 	 train_rmse:0.4185 	 valid_rmse:1.2470 	 time:71.034 s
-epoch: 143  loss: 0.20521288477284935
-EarlyStopping counter: 8 out of 100 best val: 1.2454
-epoch:143 	 train_rmse:0.4085 	 valid_rmse:1.2739 	 time:70.570 s
-epoch: 144  loss: 0.20753701592004428
-EarlyStopping counter: 9 out of 100 best val: 1.2454
-epoch:144 	 train_rmse:0.4450 	 valid_rmse:1.2716 	 time:71.144 s
-epoch: 145  loss: 0.19715271169139492
-EarlyStopping counter: 10 out of 100 best val: 1.2454
-epoch:145 	 train_rmse:0.4354 	 valid_rmse:1.2592 	 time:73.075 s
-epoch: 146  loss: 0.21805680350911233
-EarlyStopping counter: 11 out of 100 best val: 1.2454
-epoch:146 	 train_rmse:0.4876 	 valid_rmse:1.2817 	 time:71.002 s
-epoch: 147  loss: 0.2209420245821758
-EarlyStopping counter: 12 out of 100 best val: 1.2454
-epoch:147 	 train_rmse:0.4267 	 valid_rmse:1.2981 	 time:71.620 s
-epoch: 148  loss: 0.20777368249111278
-EarlyStopping counter: 13 out of 100 best val: 1.2454
-epoch:148 	 train_rmse:0.4404 	 valid_rmse:1.2615 	 time:71.403 s
-epoch: 149  loss: 0.19827485661352834
-EarlyStopping counter: 14 out of 100 best val: 1.2454
-epoch:149 	 train_rmse:0.4329 	 valid_rmse:1.2579 	 time:71.270 s
-epoch: 150  loss: 0.1941727011274266
-EarlyStopping counter: 15 out of 100 best val: 1.2454
-epoch:150 	 train_rmse:0.4011 	 valid_rmse:1.2632 	 time:71.292 s
-epoch: 151  loss: 0.18552585514963313
-EarlyStopping counter: 16 out of 100 best val: 1.2454
-epoch:151 	 train_rmse:0.4120 	 valid_rmse:1.2696 	 time:71.153 s
-epoch: 152  loss: 0.17541513071265272
-EarlyStopping counter: 17 out of 100 best val: 1.2454
-epoch:152 	 train_rmse:0.3954 	 valid_rmse:1.2653 	 time:71.274 s
-epoch: 153  loss: 0.17660014579693475
-epoch:153 	 train_rmse:0.4196 	 valid_rmse:1.2379 	 time:71.212 s
-epoch: 154  loss: 0.18015713452972393
-EarlyStopping counter: 1 out of 100 best val: 1.2379
-epoch:154 	 train_rmse:0.4321 	 valid_rmse:1.2532 	 time:71.049 s
-epoch: 155  loss: 0.18818123029765263
-EarlyStopping counter: 2 out of 100 best val: 1.2379
-epoch:155 	 train_rmse:0.4238 	 valid_rmse:1.2656 	 time:71.382 s
-epoch: 156  loss: 0.1841630777043681
-EarlyStopping counter: 3 out of 100 best val: 1.2379
-epoch:156 	 train_rmse:0.4036 	 valid_rmse:1.2670 	 time:71.028 s
-epoch: 157  loss: 0.1987805063686063
-EarlyStopping counter: 4 out of 100 best val: 1.2379
-epoch:157 	 train_rmse:0.4337 	 valid_rmse:1.2527 	 time:70.975 s
-epoch: 158  loss: 0.20481210145899045
-EarlyStopping counter: 5 out of 100 best val: 1.2379
-epoch:158 	 train_rmse:0.4468 	 valid_rmse:1.2409 	 time:70.849 s
-epoch: 159  loss: 0.20396656983642167
-EarlyStopping counter: 6 out of 100 best val: 1.2379
-epoch:159 	 train_rmse:0.4588 	 valid_rmse:1.2782 	 time:70.879 s
-epoch: 160  loss: 0.19957072399957207
-EarlyStopping counter: 7 out of 100 best val: 1.2379
-epoch:160 	 train_rmse:0.4305 	 valid_rmse:1.2736 	 time:72.415 s
-epoch: 161  loss: 0.19078530980053768
-EarlyStopping counter: 8 out of 100 best val: 1.2379
-epoch:161 	 train_rmse:0.4593 	 valid_rmse:1.2707 	 time:70.739 s
-epoch: 162  loss: 0.1856792278347477
-EarlyStopping counter: 9 out of 100 best val: 1.2379
-epoch:162 	 train_rmse:0.3969 	 valid_rmse:1.2701 	 time:70.833 s
-epoch: 163  loss: 0.17601006301820918
-EarlyStopping counter: 10 out of 100 best val: 1.2379
-epoch:163 	 train_rmse:0.4196 	 valid_rmse:1.2560 	 time:71.431 s
-epoch: 164  loss: 0.19208812713623047
-EarlyStopping counter: 11 out of 100 best val: 1.2379
-epoch:164 	 train_rmse:0.3754 	 valid_rmse:1.2496 	 time:72.527 s
-epoch: 165  loss: 0.17556540531817302
-EarlyStopping counter: 12 out of 100 best val: 1.2379
-epoch:165 	 train_rmse:0.4138 	 valid_rmse:1.2457 	 time:72.920 s
-epoch: 166  loss: 0.16782069013964745
-epoch:166 	 train_rmse:0.3588 	 valid_rmse:1.2311 	 time:73.207 s
-epoch: 167  loss: 0.17636238511211128
-EarlyStopping counter: 1 out of 100 best val: 1.2311
-epoch:167 	 train_rmse:0.3402 	 valid_rmse:1.2427 	 time:72.335 s
-epoch: 168  loss: 0.1802883584813405
-EarlyStopping counter: 2 out of 100 best val: 1.2311
-epoch:168 	 train_rmse:0.4476 	 valid_rmse:1.2728 	 time:71.644 s
-epoch: 169  loss: 0.18238431111138353
-EarlyStopping counter: 3 out of 100 best val: 1.2311
-epoch:169 	 train_rmse:0.3879 	 valid_rmse:1.2536 	 time:71.642 s
-epoch: 170  loss: 0.17161349663811346
-EarlyStopping counter: 4 out of 100 best val: 1.2311
-epoch:170 	 train_rmse:0.4130 	 valid_rmse:1.2729 	 time:71.743 s
-epoch: 171  loss: 0.17731733379825468
-EarlyStopping counter: 5 out of 100 best val: 1.2311
-epoch:171 	 train_rmse:0.3883 	 valid_rmse:1.2367 	 time:71.722 s
-epoch: 172  loss: 0.17991007696236333
-EarlyStopping counter: 6 out of 100 best val: 1.2311
-epoch:172 	 train_rmse:0.3790 	 valid_rmse:1.2319 	 time:71.840 s
-epoch: 173  loss: 0.18449007150947408
-EarlyStopping counter: 7 out of 100 best val: 1.2311
-epoch:173 	 train_rmse:0.3970 	 valid_rmse:1.2781 	 time:72.284 s
-epoch: 174  loss: 0.19963075156493854
-EarlyStopping counter: 8 out of 100 best val: 1.2311
-epoch:174 	 train_rmse:0.4015 	 valid_rmse:1.2611 	 time:73.535 s
-epoch: 175  loss: 0.1769705068680548
-EarlyStopping counter: 9 out of 100 best val: 1.2311
-epoch:175 	 train_rmse:0.3862 	 valid_rmse:1.2525 	 time:71.945 s
-epoch: 176  loss: 0.1764674098581396
-EarlyStopping counter: 10 out of 100 best val: 1.2311
-epoch:176 	 train_rmse:0.4016 	 valid_rmse:1.2650 	 time:71.681 s
-epoch: 177  loss: 0.17695143562491222
-EarlyStopping counter: 11 out of 100 best val: 1.2311
-epoch:177 	 train_rmse:0.4160 	 valid_rmse:1.2736 	 time:71.924 s
+epoch:0 	 train_rmse:6.5210 	 valid_rmse:6.5879 	 time:78.000 s
+epoch:1 	 train_rmse:5.5548 	 valid_rmse:5.5786 	 time:78.000 s
+epoch:2 	 train_rmse:5.6504 	 valid_rmse:5.7440 	 time:78.000 s
+epoch:3 	 train_rmse:3.2315 	 valid_rmse:3.2951 	 time:78.000 s
+epoch:4 	 train_rmse:3.0119 	 valid_rmse:3.0779 	 time:78.000 s
+epoch:5 	 train_rmse:1.7931 	 valid_rmse:1.8722 	 time:78.000 s
+epoch:6 	 train_rmse:1.7097 	 valid_rmse:1.8112 	 time:78.000 s
+epoch:7 	 train_rmse:1.3711 	 valid_rmse:1.4592 	 time:78.000 s
+epoch:8 	 train_rmse:1.3066 	 valid_rmse:1.3862 	 time:78.000 s
+epoch:9 	 train_rmse:1.2848 	 valid_rmse:1.4129 	 time:78.000 s
+epoch:10 	 train_rmse:1.3263 	 valid_rmse:1.4902 	 time:78.000 s
+epoch:11 	 train_rmse:1.2567 	 valid_rmse:1.3906 	 time:78.000 s
+epoch:12 	 train_rmse:1.2208 	 valid_rmse:1.3613 	 time:78.000 s
+epoch:13 	 train_rmse:1.2341 	 valid_rmse:1.4149 	 time:78.000 s
+epoch:14 	 train_rmse:1.2299 	 valid_rmse:1.4238 	 time:78.000 s
+epoch:15 	 train_rmse:1.1815 	 valid_rmse:1.3758 	 time:78.000 s
+epoch:16 	 train_rmse:1.2202 	 valid_rmse:1.4174 	 time:78.000 s
+epoch:17 	 train_rmse:1.2407 	 valid_rmse:1.3940 	 time:78.000 s
+epoch:18 	 train_rmse:1.2232 	 valid_rmse:1.3985 	 time:78.000 s
+epoch:19 	 train_rmse:1.1681 	 valid_rmse:1.3804 	 time:78.000 s
+epoch:20 	 train_rmse:1.1155 	 valid_rmse:1.3653 	 time:78.000 s
+epoch:21 	 train_rmse:1.0779 	 valid_rmse:1.3265 	 time:78.000 s
+epoch:22 	 train_rmse:1.1737 	 valid_rmse:1.4156 	 time:78.000 s
+epoch:23 	 train_rmse:1.1129 	 valid_rmse:1.3350 	 time:78.000 s
+epoch:24 	 train_rmse:0.9965 	 valid_rmse:1.2813 	 time:78.000 s
+epoch:25 	 train_rmse:1.1803 	 valid_rmse:1.4967 	 time:78.000 s
+epoch:26 	 train_rmse:1.0279 	 valid_rmse:1.4018 	 time:78.000 s
+epoch:27 	 train_rmse:0.9708 	 valid_rmse:1.3318 	 time:78.000 s
+epoch:28 	 train_rmse:0.9878 	 valid_rmse:1.3061 	 time:78.000 s
+epoch:29 	 train_rmse:0.9741 	 valid_rmse:1.3157 	 time:78.000 s
+epoch:30 	 train_rmse:0.9901 	 valid_rmse:1.3470 	 time:78.000 s
+epoch:31 	 train_rmse:0.9841 	 valid_rmse:1.3482 	 time:78.000 s
+epoch:32 	 train_rmse:0.9103 	 valid_rmse:1.3155 	 time:78.000 s
+epoch:33 	 train_rmse:0.9286 	 valid_rmse:1.3684 	 time:78.000 s
+epoch:34 	 train_rmse:0.9011 	 valid_rmse:1.3496 	 time:78.000 s
+epoch:35 	 train_rmse:0.8103 	 valid_rmse:1.3103 	 time:78.000 s
+epoch:36 	 train_rmse:0.8991 	 valid_rmse:1.3349 	 time:78.000 s
+epoch:37 	 train_rmse:0.8641 	 valid_rmse:1.3094 	 time:78.000 s
+epoch:38 	 train_rmse:0.8423 	 valid_rmse:1.3249 	 time:78.000 s
+epoch:39 	 train_rmse:0.8495 	 valid_rmse:1.3198 	 time:78.000 s
+epoch:40 	 train_rmse:0.8203 	 valid_rmse:1.3335 	 time:78.000 s
+epoch:41 	 train_rmse:0.7850 	 valid_rmse:1.2667 	 time:78.000 s
+epoch:42 	 train_rmse:0.7177 	 valid_rmse:1.2342 	 time:78.000 s
+epoch:43 	 train_rmse:0.7599 	 valid_rmse:1.2961 	 time:78.000 s
+epoch:44 	 train_rmse:0.7350 	 valid_rmse:1.2603 	 time:78.000 s
+epoch:45 	 train_rmse:0.7571 	 valid_rmse:1.3343 	 time:78.000 s
+epoch:46 	 train_rmse:0.6379 	 valid_rmse:1.2275 	 time:78.000 s
+epoch:47 	 train_rmse:0.7060 	 valid_rmse:1.2591 	 time:78.000 s
+epoch:48 	 train_rmse:0.7954 	 valid_rmse:1.3432 	 time:78.000 s
+epoch:49 	 train_rmse:0.6577 	 valid_rmse:1.2543 	 time:78.000 s
+epoch:50 	 train_rmse:0.6809 	 valid_rmse:1.2796 	 time:78.000 s
+epoch:51 	 train_rmse:0.7009 	 valid_rmse:1.2800 	 time:78.000 s
+epoch:52 	 train_rmse:0.6950 	 valid_rmse:1.2864 	 time:78.000 s
+epoch:53 	 train_rmse:0.6588 	 valid_rmse:1.2861 	 time:78.000 s
+epoch:54 	 train_rmse:0.6817 	 valid_rmse:1.2874 	 time:78.000 s
+epoch:55 	 train_rmse:0.7025 	 valid_rmse:1.2833 	 time:78.000 s
+epoch:56 	 train_rmse:0.6201 	 valid_rmse:1.2963 	 time:78.000 s
+epoch:57 	 train_rmse:0.6102 	 valid_rmse:1.2572 	 time:78.000 s
+epoch:58 	 train_rmse:0.6547 	 valid_rmse:1.2642 	 time:78.000 s
+epoch:59 	 train_rmse:0.6748 	 valid_rmse:1.2932 	 time:78.000 s
+epoch:60 	 train_rmse:0.6048 	 valid_rmse:1.2467 	 time:78.000 s
+epoch:61 	 train_rmse:0.5729 	 valid_rmse:1.2140 	 time:78.000 s
+epoch:62 	 train_rmse:0.5807 	 valid_rmse:1.2363 	 time:78.000 s
+epoch:63 	 train_rmse:0.6281 	 valid_rmse:1.2889 	 time:78.000 s
+epoch:64 	 train_rmse:0.5915 	 valid_rmse:1.2572 	 time:78.000 s
+epoch:65 	 train_rmse:0.5835 	 valid_rmse:1.2425 	 time:78.000 s
+epoch:66 	 train_rmse:0.6426 	 valid_rmse:1.2690 	 time:78.000 s
+epoch:67 	 train_rmse:0.5096 	 valid_rmse:1.2435 	 time:78.000 s
+epoch:68 	 train_rmse:0.5568 	 valid_rmse:1.2673 	 time:78.000 s
+epoch:69 	 train_rmse:0.5620 	 valid_rmse:1.2552 	 time:78.000 s
+epoch:70 	 train_rmse:0.6069 	 valid_rmse:1.2727 	 time:78.000 s
+epoch:71 	 train_rmse:0.5591 	 valid_rmse:1.2761 	 time:78.000 s
+epoch:72 	 train_rmse:0.6197 	 valid_rmse:1.3001 	 time:78.000 s
+epoch:73 	 train_rmse:0.5611 	 valid_rmse:1.2529 	 time:78.000 s
+epoch:74 	 train_rmse:0.5147 	 valid_rmse:1.2379 	 time:78.000 s
+epoch:75 	 train_rmse:0.6643 	 valid_rmse:1.2779 	 time:78.000 s
+epoch:76 	 train_rmse:0.4995 	 valid_rmse:1.2651 	 time:78.000 s
+epoch:77 	 train_rmse:0.5479 	 valid_rmse:1.2746 	 time:78.000 s
+epoch:78 	 train_rmse:0.5226 	 valid_rmse:1.2643 	 time:78.000 s
+epoch:79 	 train_rmse:0.5064 	 valid_rmse:1.2283 	 time:78.000 s
+epoch:80 	 train_rmse:0.5190 	 valid_rmse:1.2563 	 time:78.000 s
+epoch:81 	 train_rmse:0.5508 	 valid_rmse:1.2460 	 time:78.000 s
+epoch:82 	 train_rmse:0.5066 	 valid_rmse:1.2612 	 time:78.000 s
+epoch:83 	 train_rmse:0.5695 	 valid_rmse:1.2830 	 time:78.000 s
+epoch:84 	 train_rmse:0.5151 	 valid_rmse:1.2516 	 time:78.000 s
+epoch:85 	 train_rmse:0.5354 	 valid_rmse:1.2772 	 time:78.000 s
+epoch:86 	 train_rmse:0.5041 	 valid_rmse:1.2549 	 time:78.000 s
+epoch:87 	 train_rmse:0.4800 	 valid_rmse:1.2480 	 time:78.000 s
+epoch:88 	 train_rmse:0.4927 	 valid_rmse:1.2628 	 time:78.000 s
+epoch:89 	 train_rmse:0.4696 	 valid_rmse:1.2585 	 time:78.000 s
+epoch:90 	 train_rmse:0.5519 	 valid_rmse:1.2668 	 time:78.000 s
+epoch:91 	 train_rmse:0.5415 	 valid_rmse:1.2629 	 time:78.000 s
+epoch:92 	 train_rmse:0.5096 	 valid_rmse:1.2721 	 time:78.000 s
+epoch:93 	 train_rmse:0.5473 	 valid_rmse:1.2699 	 time:78.000 s
+epoch:94 	 train_rmse:0.5352 	 valid_rmse:1.2388 	 time:78.000 s
+epoch:95 	 train_rmse:0.4944 	 valid_rmse:1.2367 	 time:78.000 s
+epoch:96 	 train_rmse:0.4393 	 valid_rmse:1.2591 	 time:78.000 s
+epoch:97 	 train_rmse:0.4641 	 valid_rmse:1.2538 	 time:78.000 s
+epoch:98 	 train_rmse:0.5202 	 valid_rmse:1.2641 	 time:78.000 s
+epoch:99 	 train_rmse:0.4765 	 valid_rmse:1.2284 	 time:78.000 s
+epoch:100 	 train_rmse:0.4767 	 valid_rmse:1.2456 	 time:78.000 s
+epoch:101 	 train_rmse:0.4380 	 valid_rmse:1.2589 	 time:78.000 s
+epoch:102 	 train_rmse:0.4591 	 valid_rmse:1.2821 	 time:78.000 s
+epoch:103 	 train_rmse:0.5109 	 valid_rmse:1.2790 	 time:78.000 s
+epoch:104 	 train_rmse:0.4846 	 valid_rmse:1.2612 	 time:78.000 s
+epoch:105 	 train_rmse:0.5111 	 valid_rmse:1.2886 	 time:78.000 s
+epoch:106 	 train_rmse:0.4209 	 valid_rmse:1.2233 	 time:78.000 s
+epoch:107 	 train_rmse:0.5100 	 valid_rmse:1.2755 	 time:78.000 s
+epoch:108 	 train_rmse:0.4477 	 valid_rmse:1.2453 	 time:78.000 s
+epoch:109 	 train_rmse:0.4988 	 valid_rmse:1.2655 	 time:78.000 s
+epoch:110 	 train_rmse:0.4856 	 valid_rmse:1.2752 	 time:78.000 s
+epoch:111 	 train_rmse:0.4531 	 valid_rmse:1.2367 	 time:78.000 s
+epoch:112 	 train_rmse:0.4602 	 valid_rmse:1.2603 	 time:78.000 s
+epoch:113 	 train_rmse:0.5055 	 valid_rmse:1.3015 	 time:78.000 s
+epoch:114 	 train_rmse:0.4684 	 valid_rmse:1.2422 	 time:78.000 s
+epoch:115 	 train_rmse:0.4402 	 valid_rmse:1.2512 	 time:78.000 s
+epoch:116 	 train_rmse:0.4215 	 valid_rmse:1.2595 	 time:78.000 s
+epoch:117 	 train_rmse:0.4737 	 valid_rmse:1.2622 	 time:78.000 s
+epoch:118 	 train_rmse:0.4181 	 valid_rmse:1.2578 	 time:78.000 s
+epoch:119 	 train_rmse:0.5970 	 valid_rmse:1.3190 	 time:78.000 s
+epoch:120 	 train_rmse:0.5103 	 valid_rmse:1.2732 	 time:78.000 s
+epoch:121 	 train_rmse:0.4127 	 valid_rmse:1.2459 	 time:78.000 s
+epoch:122 	 train_rmse:0.4534 	 valid_rmse:1.2481 	 time:78.000 s
+epoch:123 	 train_rmse:0.4465 	 valid_rmse:1.2449 	 time:78.000 s
+epoch:124 	 train_rmse:0.4124 	 valid_rmse:1.2273 	 time:78.000 s
+epoch:125 	 train_rmse:0.4370 	 valid_rmse:1.2525 	 time:78.000 s
+epoch:126 	 train_rmse:0.4451 	 valid_rmse:1.2664 	 time:78.000 s
+epoch:127 	 train_rmse:0.4612 	 valid_rmse:1.2641 	 time:78.000 s
+epoch:128 	 train_rmse:0.4304 	 valid_rmse:1.2566 	 time:78.000 s
+epoch:129 	 train_rmse:0.4450 	 valid_rmse:1.2524 	 time:78.000 s
+epoch:130 	 train_rmse:0.4784 	 valid_rmse:1.2726 	 time:78.000 s
+epoch:131 	 train_rmse:0.4679 	 valid_rmse:1.2760 	 time:78.000 s
+epoch:132 	 train_rmse:0.4225 	 valid_rmse:1.2550 	 time:78.000 s
+epoch:133 	 train_rmse:0.4110 	 valid_rmse:1.2375 	 time:78.000 s
+epoch:134 	 train_rmse:0.4166 	 valid_rmse:1.2564 	 time:78.000 s
+epoch:135 	 train_rmse:0.4252 	 valid_rmse:1.2315 	 time:78.000 s
+epoch:136 	 train_rmse:0.3885 	 valid_rmse:1.2198 	 time:78.000 s
+epoch:137 	 train_rmse:0.4303 	 valid_rmse:1.2562 	 time:78.000 s
+epoch:138 	 train_rmse:0.4380 	 valid_rmse:1.2617 	 time:78.000 s
+epoch:139 	 train_rmse:0.4556 	 valid_rmse:1.2827 	 time:78.000 s
+epoch:140 	 train_rmse:0.4070 	 valid_rmse:1.2564 	 time:78.000 s
+epoch:141 	 train_rmse:0.4169 	 valid_rmse:1.2438 	 time:78.000 s
+epoch:142 	 train_rmse:0.4506 	 valid_rmse:1.2437 	 time:78.000 s
+epoch:143 	 train_rmse:0.4381 	 valid_rmse:1.2706 	 time:78.000 s
+epoch:144 	 train_rmse:0.4323 	 valid_rmse:1.2697 	 time:78.000 s
+epoch:145 	 train_rmse:0.3970 	 valid_rmse:1.2304 	 time:78.000 s
+epoch:146 	 train_rmse:0.3887 	 valid_rmse:1.2497 	 time:78.000 s
+epoch:147 	 train_rmse:0.4155 	 valid_rmse:1.2423 	 time:78.000 s
+epoch:148 	 train_rmse:0.3944 	 valid_rmse:1.2340 	 time:78.000 s
+epoch:149 	 train_rmse:0.4687 	 valid_rmse:1.2354 	 time:78.000 s
+epoch:150 	 train_rmse:0.4458 	 valid_rmse:1.2425 	 time:78.000 s
+epoch:151 	 train_rmse:0.3972 	 valid_rmse:1.2099 	 time:78.000 s
+epoch:152 	 train_rmse:0.3911 	 valid_rmse:1.2461 	 time:78.000 s
+epoch:153 	 train_rmse:0.3748 	 valid_rmse:1.2286 	 time:78.000 s
+epoch:154 	 train_rmse:0.3795 	 valid_rmse:1.2281 	 time:78.000 s
+epoch:155 	 train_rmse:0.3932 	 valid_rmse:1.2483 	 time:78.000 s
+epoch:156 	 train_rmse:0.3980 	 valid_rmse:1.2468 	 time:78.000 s
+epoch:157 	 train_rmse:0.4298 	 valid_rmse:1.2585 	 time:78.000 s
+epoch:158 	 train_rmse:0.4081 	 valid_rmse:1.2507 	 time:78.000 s
+epoch:159 	 train_rmse:0.3699 	 valid_rmse:1.2334 	 time:78.000 s
+epoch:160 	 train_rmse:0.4220 	 valid_rmse:1.2376 	 time:78.000 s
+epoch:161 	 train_rmse:0.4471 	 valid_rmse:1.2480 	 time:78.000 s
+epoch:162 	 train_rmse:0.3727 	 valid_rmse:1.2387 	 time:78.000 s
+epoch:163 	 train_rmse:0.3911 	 valid_rmse:1.2406 	 time:78.000 s
+epoch:164 	 train_rmse:0.4742 	 valid_rmse:1.2670 	 time:78.000 s
+epoch:165 	 train_rmse:0.3584 	 valid_rmse:1.2328 	 time:78.000 s
+epoch:166 	 train_rmse:0.3902 	 valid_rmse:1.2431 	 time:78.000 s
+epoch:167 	 train_rmse:0.3514 	 valid_rmse:1.2472 	 time:78.000 s
+epoch:168 	 train_rmse:0.4104 	 valid_rmse:1.2399 	 time:78.000 s
+epoch:169 	 train_rmse:0.4328 	 valid_rmse:1.2688 	 time:78.000 s
+epoch:170 	 train_rmse:0.3783 	 valid_rmse:1.2398 	 time:78.000 s
+epoch:171 	 train_rmse:0.4033 	 valid_rmse:1.2401 	 time:78.000 s
+epoch:172 	 train_rmse:0.4544 	 valid_rmse:1.2698 	 time:78.000 s
+epoch:173 	 train_rmse:0.3773 	 valid_rmse:1.2484 	 time:78.000 s
+epoch:174 	 train_rmse:0.4522 	 valid_rmse:1.2845 	 time:78.000 s
+epoch:175 	 train_rmse:0.3787 	 valid_rmse:1.2474 	 time:78.000 s
+epoch:176 	 train_rmse:0.3644 	 valid_rmse:1.2510 	 time:78.000 s
+epoch:177 	 train_rmse:0.4129 	 valid_rmse:1.2443 	 time:78.000 s
+epoch:178 	 train_rmse:0.3573 	 valid_rmse:1.2470 	 time:78.000 s
+epoch:179 	 train_rmse:0.3787 	 valid_rmse:1.2541 	 time:78.000 s
+epoch:180 	 train_rmse:0.3507 	 valid_rmse:1.2343 	 time:78.000 s
+epoch:181 	 train_rmse:0.3899 	 valid_rmse:1.2397 	 time:78.000 s
+epoch:182 	 train_rmse:0.3527 	 valid_rmse:1.2225 	 time:78.000 s
+epoch:183 	 train_rmse:0.4085 	 valid_rmse:1.2740 	 time:78.000 s
+epoch:184 	 train_rmse:0.4118 	 valid_rmse:1.2545 	 time:78.000 s
+epoch:185 	 train_rmse:0.3688 	 valid_rmse:1.2237 	 time:78.000 s
+epoch:186 	 train_rmse:0.3617 	 valid_rmse:1.2341 	 time:78.000 s
+epoch:187 	 train_rmse:0.3830 	 valid_rmse:1.2549 	 time:78.000 s
+epoch:188 	 train_rmse:0.3631 	 valid_rmse:1.2658 	 time:78.000 s
+epoch:189 	 train_rmse:0.3532 	 valid_rmse:1.2141 	 time:78.000 s
+epoch:190 	 train_rmse:0.4148 	 valid_rmse:1.2545 	 time:78.000 s
+epoch:191 	 train_rmse:0.3762 	 valid_rmse:1.2516 	 time:78.000 s
+epoch:192 	 train_rmse:0.3926 	 valid_rmse:1.2231 	 time:78.000 s
+epoch:193 	 train_rmse:0.3351 	 valid_rmse:1.2320 	 time:78.000 s
+epoch:194 	 train_rmse:0.3880 	 valid_rmse:1.2311 	 time:78.000 s
+epoch:195 	 train_rmse:0.3315 	 valid_rmse:1.2223 	 time:78.000 s
+epoch:196 	 train_rmse:0.3401 	 valid_rmse:1.2339 	 time:78.000 s
+epoch:197 	 train_rmse:0.3738 	 valid_rmse:1.2310 	 time:78.000 s
+epoch:198 	 train_rmse:0.3738 	 valid_rmse:1.2460 	 time:78.000 s
+epoch:199 	 train_rmse:0.4293 	 valid_rmse:1.2106 	 time:78.000 s
+epoch:200 	 train_rmse:0.3744 	 valid_rmse:1.2473 	 time:78.000 s
+epoch:201 	 train_rmse:0.4079 	 valid_rmse:1.2256 	 time:78.000 s
+epoch:202 	 train_rmse:0.3837 	 valid_rmse:1.2330 	 time:78.000 s
+epoch:203 	 train_rmse:0.3325 	 valid_rmse:1.2302 	 time:78.000 s
+epoch:204 	 train_rmse:0.3582 	 valid_rmse:1.2377 	 time:78.000 s
+epoch:205 	 train_rmse:0.3564 	 valid_rmse:1.2392 	 time:78.000 s
+epoch:206 	 train_rmse:0.3837 	 valid_rmse:1.2586 	 time:78.000 s
+epoch:207 	 train_rmse:0.3468 	 valid_rmse:1.2439 	 time:78.000 s
+epoch:208 	 train_rmse:0.3970 	 valid_rmse:1.2547 	 time:78.000 s
+epoch:209 	 train_rmse:0.3447 	 valid_rmse:1.2004 	 time:78.000 s
+epoch:210 	 train_rmse:0.3311 	 valid_rmse:1.2186 	 time:78.000 s
+epoch:211 	 train_rmse:0.3237 	 valid_rmse:1.2352 	 time:78.000 s
+epoch:212 	 train_rmse:0.3571 	 valid_rmse:1.2210 	 time:78.000 s
+epoch:213 	 train_rmse:0.3619 	 valid_rmse:1.2385 	 time:78.000 s
+epoch:214 	 train_rmse:0.3796 	 valid_rmse:1.2583 	 time:78.000 s
+epoch:215 	 train_rmse:0.4146 	 valid_rmse:1.2460 	 time:78.000 s
+epoch:216 	 train_rmse:0.3916 	 valid_rmse:1.2236 	 time:78.000 s
+epoch:217 	 train_rmse:0.3741 	 valid_rmse:1.2178 	 time:78.000 s
+epoch:218 	 train_rmse:0.3443 	 valid_rmse:1.2456 	 time:78.000 s
+epoch:219 	 train_rmse:0.3883 	 valid_rmse:1.2042 	 time:78.000 s
+epoch:220 	 train_rmse:0.3775 	 valid_rmse:1.2240 	 time:78.000 s
+epoch:221 	 train_rmse:0.4460 	 valid_rmse:1.2715 	 time:78.000 s
+epoch:222 	 train_rmse:0.3444 	 valid_rmse:1.2368 	 time:78.000 s
+epoch:223 	 train_rmse:0.3239 	 valid_rmse:1.2251 	 time:78.000 s
+epoch:224 	 train_rmse:0.3402 	 valid_rmse:1.2244 	 time:78.000 s
+epoch:225 	 train_rmse:0.3444 	 valid_rmse:1.2574 	 time:78.000 s
+epoch:226 	 train_rmse:0.3601 	 valid_rmse:1.2455 	 time:78.000 s
+epoch:227 	 train_rmse:0.3352 	 valid_rmse:1.2219 	 time:78.000 s
+epoch:228 	 train_rmse:0.3334 	 valid_rmse:1.2181 	 time:78.000 s
+epoch:229 	 train_rmse:0.3119 	 valid_rmse:1.2333 	 time:78.000 s
+epoch:230 	 train_rmse:0.3509 	 valid_rmse:1.2268 	 time:78.000 s
+epoch:231 	 train_rmse:0.3701 	 valid_rmse:1.2457 	 time:78.000 s
+epoch:232 	 train_rmse:0.3895 	 valid_rmse:1.2395 	 time:78.000 s
+epoch:233 	 train_rmse:0.3726 	 valid_rmse:1.2389 	 time:78.000 s
+epoch:234 	 train_rmse:0.3711 	 valid_rmse:1.2530 	 time:78.000 s
+epoch:235 	 train_rmse:0.3348 	 valid_rmse:1.2312 	 time:78.000 s
+epoch:236 	 train_rmse:0.3664 	 valid_rmse:1.2222 	 time:78.000 s
+epoch:237 	 train_rmse:0.3229 	 valid_rmse:1.2155 	 time:78.000 s
+epoch:238 	 train_rmse:0.3192 	 valid_rmse:1.2113 	 time:78.000 s
+epoch:239 	 train_rmse:0.3646 	 valid_rmse:1.2435 	 time:78.000 s
+epoch:240 	 train_rmse:0.3307 	 valid_rmse:1.2112 	 time:78.000 s
+epoch:241 	 train_rmse:0.3392 	 valid_rmse:1.2259 	 time:78.000 s
+epoch:242 	 train_rmse:0.3517 	 valid_rmse:1.2275 	 time:78.000 s
+epoch:243 	 train_rmse:0.3580 	 valid_rmse:1.2217 	 time:78.000 s
+epoch:244 	 train_rmse:0.3464 	 valid_rmse:1.2176 	 time:78.000 s
+epoch:245 	 train_rmse:0.3552 	 valid_rmse:1.2488 	 time:78.000 s
+epoch:246 	 train_rmse:0.3708 	 valid_rmse:1.2442 	 time:78.000 s
+epoch:247 	 train_rmse:0.3397 	 valid_rmse:1.2250 	 time:78.000 s
+epoch:248 	 train_rmse:0.3316 	 valid_rmse:1.2226 	 time:78.000 s
+epoch:249 	 train_rmse:0.3329 	 valid_rmse:1.2293 	 time:78.000 s
+epoch:250 	 train_rmse:0.3084 	 valid_rmse:1.2405 	 time:78.000 s
+epoch:251 	 train_rmse:0.3311 	 valid_rmse:1.2235 	 time:78.000 s
+epoch:252 	 train_rmse:0.3387 	 valid_rmse:1.2410 	 time:78.000 s
+epoch:253 	 train_rmse:0.3279 	 valid_rmse:1.2181 	 time:78.000 s
+epoch:254 	 train_rmse:0.3525 	 valid_rmse:1.2314 	 time:78.000 s
+epoch:255 	 train_rmse:0.3343 	 valid_rmse:1.2328 	 time:78.000 s
+epoch:256 	 train_rmse:0.3293 	 valid_rmse:1.2239 	 time:78.000 s
+epoch:257 	 train_rmse:0.4163 	 valid_rmse:1.2696 	 time:78.000 s
+epoch:258 	 train_rmse:0.3487 	 valid_rmse:1.2302 	 time:78.000 s
+epoch:259 	 train_rmse:0.3373 	 valid_rmse:1.2403 	 time:78.000 s
+epoch:260 	 train_rmse:0.4131 	 valid_rmse:1.2672 	 time:78.000 s
+epoch:261 	 train_rmse:0.3308 	 valid_rmse:1.2334 	 time:78.000 s
+epoch:262 	 train_rmse:0.3476 	 valid_rmse:1.2189 	 time:78.000 s
+epoch:263 	 train_rmse:0.4005 	 valid_rmse:1.2382 	 time:78.000 s
+epoch:264 	 train_rmse:0.3234 	 valid_rmse:1.2151 	 time:78.000 s
+epoch:265 	 train_rmse:0.3355 	 valid_rmse:1.2032 	 time:78.000 s
+epoch:266 	 train_rmse:0.3496 	 valid_rmse:1.2320 	 time:78.000 s
+epoch:267 	 train_rmse:0.2931 	 valid_rmse:1.2038 	 time:78.000 s
+epoch:268 	 train_rmse:0.3029 	 valid_rmse:1.2111 	 time:78.000 s
+epoch:269 	 train_rmse:0.3113 	 valid_rmse:1.2243 	 time:78.000 s
+epoch:270 	 train_rmse:0.3407 	 valid_rmse:1.2203 	 time:78.000 s
+epoch:271 	 train_rmse:0.3325 	 valid_rmse:1.2197 	 time:78.000 s
+epoch:272 	 train_rmse:0.2923 	 valid_rmse:1.2057 	 time:78.000 s
+epoch:273 	 train_rmse:0.3699 	 valid_rmse:1.2509 	 time:78.000 s
+epoch:274 	 train_rmse:0.3862 	 valid_rmse:1.2524 	 time:78.000 s
+epoch:275 	 train_rmse:0.4066 	 valid_rmse:1.2487 	 time:78.000 s
+epoch:276 	 train_rmse:0.3693 	 valid_rmse:1.2152 	 time:78.000 s
+epoch:277 	 train_rmse:0.3339 	 valid_rmse:1.2059 	 time:78.000 s
+epoch:278 	 train_rmse:0.3047 	 valid_rmse:1.1898 	 time:78.000 s
+epoch:279 	 train_rmse:0.3086 	 valid_rmse:1.2044 	 time:78.000 s
+epoch:280 	 train_rmse:0.3935 	 valid_rmse:1.2399 	 time:78.000 s
+epoch:281 	 train_rmse:0.2972 	 valid_rmse:1.2093 	 time:78.000 s
+epoch:282 	 train_rmse:0.3203 	 valid_rmse:1.2167 	 time:78.000 s
+epoch:283 	 train_rmse:0.3385 	 valid_rmse:1.2072 	 time:78.000 s
+epoch:284 	 train_rmse:0.3142 	 valid_rmse:1.2173 	 time:78.000 s
+epoch:285 	 train_rmse:0.3433 	 valid_rmse:1.2022 	 time:78.000 s
+epoch:286 	 train_rmse:0.3604 	 valid_rmse:1.2156 	 time:78.000 s
+epoch:287 	 train_rmse:0.3673 	 valid_rmse:1.2429 	 time:78.000 s
+epoch:288 	 train_rmse:0.3111 	 valid_rmse:1.2350 	 time:78.000 s
+epoch:289 	 train_rmse:0.3314 	 valid_rmse:1.2263 	 time:78.000 s
+epoch:290 	 train_rmse:0.3374 	 valid_rmse:1.2306 	 time:78.000 s
+epoch:291 	 train_rmse:0.4089 	 valid_rmse:1.2527 	 time:78.000 s
+epoch:292 	 train_rmse:0.3245 	 valid_rmse:1.2367 	 time:78.000 s
+epoch:293 	 train_rmse:0.3939 	 valid_rmse:1.2380 	 time:78.000 s
+epoch:294 	 train_rmse:0.3616 	 valid_rmse:1.2332 	 time:78.000 s
+epoch:295 	 train_rmse:0.3490 	 valid_rmse:1.2376 	 time:78.000 s
+epoch:296 	 train_rmse:0.3271 	 valid_rmse:1.2319 	 time:78.000 s
+epoch:297 	 train_rmse:0.3106 	 valid_rmse:1.2323 	 time:78.000 s
+epoch:298 	 train_rmse:0.3154 	 valid_rmse:1.2361 	 time:78.000 s
+epoch:299 	 train_rmse:0.3960 	 valid_rmse:1.2511 	 time:78.000 s
+epoch:300 	 train_rmse:0.3264 	 valid_rmse:1.2340 	 time:78.000 s
+epoch:301 	 train_rmse:0.3298 	 valid_rmse:1.2364 	 time:78.000 s
+epoch:302 	 train_rmse:0.3211 	 valid_rmse:1.2292 	 time:78.000 s
+epoch:303 	 train_rmse:0.2993 	 valid_rmse:1.2112 	 time:78.000 s
+epoch:304 	 train_rmse:0.3058 	 valid_rmse:1.2165 	 time:78.000 s
+epoch:305 	 train_rmse:0.3050 	 valid_rmse:1.2242 	 time:78.000 s
+epoch:306 	 train_rmse:0.3266 	 valid_rmse:1.2130 	 time:78.000 s
+epoch:307 	 train_rmse:0.2900 	 valid_rmse:1.2306 	 time:78.000 s
+epoch:308 	 train_rmse:0.3380 	 valid_rmse:1.2171 	 time:78.000 s
+epoch:309 	 train_rmse:0.3575 	 valid_rmse:1.2378 	 time:78.000 s
+epoch:310 	 train_rmse:0.3273 	 valid_rmse:1.2328 	 time:78.000 s
+epoch:311 	 train_rmse:0.4176 	 valid_rmse:1.2724 	 time:78.000 s
+epoch:312 	 train_rmse:0.3071 	 valid_rmse:1.2213 	 time:78.000 s
+epoch:313 	 train_rmse:0.2775 	 valid_rmse:1.2148 	 time:78.000 s
+epoch:314 	 train_rmse:0.3368 	 valid_rmse:1.2081 	 time:78.000 s
+epoch:315 	 train_rmse:0.3168 	 valid_rmse:1.2270 	 time:78.000 s
+epoch:316 	 train_rmse:0.3886 	 valid_rmse:1.2311 	 time:78.000 s
+epoch:317 	 train_rmse:0.3400 	 valid_rmse:1.2296 	 time:78.000 s
+epoch:318 	 train_rmse:0.2920 	 valid_rmse:1.2119 	 time:78.000 s
+epoch:319 	 train_rmse:0.3003 	 valid_rmse:1.2164 	 time:78.000 s
+epoch:320 	 train_rmse:0.3178 	 valid_rmse:1.2086 	 time:78.000 s
+epoch:321 	 train_rmse:0.3208 	 valid_rmse:1.2219 	 time:78.000 s
+epoch:322 	 train_rmse:0.3103 	 valid_rmse:1.2076 	 time:78.000 s
+epoch:323 	 train_rmse:0.2888 	 valid_rmse:1.2160 	 time:78.000 s
+epoch:324 	 train_rmse:0.2999 	 valid_rmse:1.2161 	 time:78.000 s
+epoch:325 	 train_rmse:0.3285 	 valid_rmse:1.2312 	 time:78.000 s
+epoch:326 	 train_rmse:0.3094 	 valid_rmse:1.2202 	 time:78.000 s
+epoch:327 	 train_rmse:0.3039 	 valid_rmse:1.2222 	 time:78.000 s
+epoch:328 	 train_rmse:0.3176 	 valid_rmse:1.2235 	 time:78.000 s
+epoch:329 	 train_rmse:0.3128 	 valid_rmse:1.2335 	 time:78.000 s
+epoch:330 	 train_rmse:0.3244 	 valid_rmse:1.2283 	 time:78.000 s
+epoch:331 	 train_rmse:0.3062 	 valid_rmse:1.2233 	 time:78.000 s
+epoch:332 	 train_rmse:0.3403 	 valid_rmse:1.2408 	 time:78.000 s
+epoch:333 	 train_rmse:0.2946 	 valid_rmse:1.2066 	 time:78.000 s
+epoch:334 	 train_rmse:0.3139 	 valid_rmse:1.2437 	 time:78.000 s
+epoch:335 	 train_rmse:0.2992 	 valid_rmse:1.2205 	 time:78.000 s
+epoch:336 	 train_rmse:0.2992 	 valid_rmse:1.2034 	 time:78.000 s
+epoch:337 	 train_rmse:0.3056 	 valid_rmse:1.2160 	 time:78.000 s
+epoch:338 	 train_rmse:0.2979 	 valid_rmse:1.2318 	 time:78.000 s
+epoch:339 	 train_rmse:0.3153 	 valid_rmse:1.2305 	 time:78.000 s
+epoch:340 	 train_rmse:0.3769 	 valid_rmse:1.2497 	 time:78.000 s
+epoch:341 	 train_rmse:0.3697 	 valid_rmse:1.2213 	 time:78.000 s
+epoch:342 	 train_rmse:0.4133 	 valid_rmse:1.2559 	 time:78.000 s
+epoch:343 	 train_rmse:0.2850 	 valid_rmse:1.1932 	 time:78.000 s
+epoch:344 	 train_rmse:0.3001 	 valid_rmse:1.2242 	 time:78.000 s
+epoch:345 	 train_rmse:0.3273 	 valid_rmse:1.2102 	 time:78.000 s
+epoch:346 	 train_rmse:0.2862 	 valid_rmse:1.2267 	 time:78.000 s
+epoch:347 	 train_rmse:0.2925 	 valid_rmse:1.2298 	 time:78.000 s
+epoch:348 	 train_rmse:0.3411 	 valid_rmse:1.2181 	 time:78.000 s
+epoch:349 	 train_rmse:0.3404 	 valid_rmse:1.2263 	 time:78.000 s
+epoch:350 	 train_rmse:0.3090 	 valid_rmse:1.2119 	 time:78.000 s
+epoch:351 	 train_rmse:0.3024 	 valid_rmse:1.2259 	 time:78.000 s
+epoch:352 	 train_rmse:0.2966 	 valid_rmse:1.2166 	 time:78.000 s
+epoch:353 	 train_rmse:0.3303 	 valid_rmse:1.2381 	 time:78.000 s
+epoch:354 	 train_rmse:0.2968 	 valid_rmse:1.2259 	 time:78.000 s
+epoch:355 	 train_rmse:0.3157 	 valid_rmse:1.2489 	 time:78.000 s
+epoch:356 	 train_rmse:0.3154 	 valid_rmse:1.2282 	 time:78.000 s
+epoch:357 	 train_rmse:0.3397 	 valid_rmse:1.2492 	 time:78.000 s
+epoch:358 	 train_rmse:0.3201 	 valid_rmse:1.2299 	 time:78.000 s
+epoch:359 	 train_rmse:0.2907 	 valid_rmse:1.2204 	 time:78.000 s
+epoch:360 	 train_rmse:0.3028 	 valid_rmse:1.2332 	 time:78.000 s
+epoch:361 	 train_rmse:0.3099 	 valid_rmse:1.2303 	 time:78.000 s
+epoch:362 	 train_rmse:0.3191 	 valid_rmse:1.2188 	 time:78.000 s
+epoch:363 	 train_rmse:0.3157 	 valid_rmse:1.2299 	 time:78.000 s
+epoch:364 	 train_rmse:0.3025 	 valid_rmse:1.2246 	 time:78.000 s
+epoch:365 	 train_rmse:0.3116 	 valid_rmse:1.2204 	 time:78.000 s
+epoch:366 	 train_rmse:0.2805 	 valid_rmse:1.2275 	 time:78.000 s
+epoch:367 	 train_rmse:0.3203 	 valid_rmse:1.2046 	 time:78.000 s
+epoch:368 	 train_rmse:0.3026 	 valid_rmse:1.2262 	 time:78.000 s
+epoch:369 	 train_rmse:0.3007 	 valid_rmse:1.2185 	 time:78.000 s
+epoch:370 	 train_rmse:0.3034 	 valid_rmse:1.2319 	 time:78.000 s
+epoch:371 	 train_rmse:0.2906 	 valid_rmse:1.2329 	 time:78.000 s
+epoch:372 	 train_rmse:0.2928 	 valid_rmse:1.2064 	 time:78.000 s
+epoch:373 	 train_rmse:0.3307 	 valid_rmse:1.2188 	 time:78.000 s
+epoch:374 	 train_rmse:0.3033 	 valid_rmse:1.2286 	 time:78.000 s
+epoch:375 	 train_rmse:0.3019 	 valid_rmse:1.2112 	 time:78.000 s
+epoch:376 	 train_rmse:0.3399 	 valid_rmse:1.2304 	 time:78.000 s
+epoch:377 	 train_rmse:0.2811 	 valid_rmse:1.2005 	 time:78.000 s
+***best model***
+train_rmse:0.3047 	 train_r2:0.9740 	 train_mae:0.2360 	 train_rp:0.9873
+valid_rmse:1.1898 	 valid_r2:0.5846 	 valid_mae:0.9162 	 valid_rp:0.7664
+test_rmse:1.3196 	 test_r2:0.6304 	 test_mae:0.9955 	 test_rp:0.7976
