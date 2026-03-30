@@ -8,14 +8,18 @@ This repository contains our reproduced, trained, and finalized weights for the 
 
 ## 📊 Results & Evidence
 
-Our custom pipeline pushed a T4 GPU cluster on Kaggle for roughly 140 Epochs, storing persistent checkpoints along the way, to arrive at these industry-competing results:
+Our custom pipeline pushed a T4 GPU cluster on Kaggle for roughly 140 Epochs, storing persistent checkpoints along the way, to arrive at these results evaluated on both CASF-2016 and CASF-2013 core sets:
 
-| Evaluation Metric | Original ML-PLA Paper Benchmark | **Our Final Trained Model** | Summary of Results |
-| :--- | :---: | :---: | :--- |
-| **MAE (Mean Absolute Error)** | 1.023 | **1.0020** | **✅ BETTER** (Smaller average error radius) |
-| **RMSE (Root Mean Square Error)** | 1.290 | **1.2986** | **✅ Near Equivalent** (Delta: 0.008) |
-| **Pearson Correlation (R)** | 0.845 | **0.8028** | **✅ Near Equivalent** |
-| **Standard Deviation** | 1.258 | **1.2966** | **✅ Near Equivalent** |
+| Metric | CASF-2016 (285 samples) | CASF-2013 (107 samples) |
+| :--- | :---: | :---: |
+| **RMSE** | **1.3196** | 1.5059 |
+| **MAE** | **0.9955** | 1.1379 |
+| **R²** | **0.6304** | 0.5794 |
+| **Pearson Rp** | **0.7976** | 0.7686 |
+| **Concordance CI** | **0.8018** | 0.7854 |
+| **SD** | **1.3114** | 1.4927 |
+
+> **CASF-2016 vs CASF-2013**: The model performs significantly better on the newer, larger CASF-2016 benchmark (lower error, higher correlation).
 
 ### Visual Proof of Convergence
 *(These assets are generated via our `scripts/plot.py` using the raw logs in the `results/` folder).*
@@ -26,7 +30,7 @@ Our custom pipeline pushed a T4 GPU cluster on Kaggle for roughly 140 Epochs, st
 
 #### 2. Training Learning Curve
 ![Learning Curve](results/learning_curve.png)
-> *Our Early Stopping patience sequence accurately detected convergence at ~Epoch 140, preventing overfitting while minimizing both Training and Validation RMSE.*
+> *Our Early Stopping patience sequence accurately detected convergence, preventing overfitting while minimizing both Training and Validation RMSE.*
 
 ---
 
@@ -35,14 +39,19 @@ Our custom pipeline pushed a T4 GPU cluster on Kaggle for roughly 140 Epochs, st
 ```text
 📦 ML-PLA-Binding-Affinity
  ┣ 📂 models/                 <- CONTAINS THE FINAL MODEL WEIGHTS
- ┃ ┣ 📜 dti_model.pth         <- Main Graph Neural Network (1.245 RMSE)
+ ┃ ┣ 📜 dti_model.pth         <- Main Graph Neural Network
  ┃ ┗ 📜 vae_model.ckpt        <- Pre-trained Protein VQ-VAE Encoder
  ┃
  ┣ 📂 results/                <- LOGS AND PROOF
+ ┃ ┣ 📂 casf2016/             <- 2016 Eval results
+ ┃ ┃ ┣ 📜 res.csv
+ ┃ ┃ ┗ 📜 test.csv
+ ┃ ┣ 📂 casf2013/             <- 2013 Eval results
+ ┃ ┃ ┣ 📜 res.csv
+ ┃ ┃ ┗ 📜 test.csv
  ┃ ┣ 📜 learning_curve.png 
  ┃ ┣ 📜 predicted_vs_actual.png 
- ┃ ┣ 📜 test.csv              <- All 285 raw predictions
- ┃ ┗ 📜 train_log.txt         <- Complete 140+ Epoch Kaggle Training trace
+ ┃ ┗ 📜 train_log.txt         <- Complete Kaggle Training trace
  ┃
  ┣ 📂 scripts/                <- OUR CUSTOM UTILITIES
  ┃ ┣ 📜 plot.py               <- Parses text files to generate the graphs
