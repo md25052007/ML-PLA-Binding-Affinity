@@ -13,6 +13,10 @@ from dgllife.model.readout.weighted_sum_and_max import WeightedSumAndMax
 from models.virtual_atom_block import *
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+# QM dimension constants (must match qm_features.py)
+QM_ATOM_FEAT_DIM = 25
+QM_MOL_FEAT_DIM  = 7
+
 class FC(nn.Module):
     def __init__(self, d_graph_layer, d_FC_layer, n_FC_layer, dropout, n_tasks):
         super(FC, self).__init__()
@@ -306,39 +310,60 @@ class ModifiedAttentiveFPPredictorV2(nn.Module):
 
 class DTIPredictor(nn.Module):
     """
-    DTA Prediction na + mape
+    DTA Prediction na + mape + MISATO QM features
     
     Parameters
     -----------------
-    node_feat_size: graph node feats dimension
-    edge_feat_size: graph edge feats dimension
-    num_layers: num gnn layers  include GetContext
-    graph_feat_size: graph hidden dimension both prot and liga.
-    res_hidden_dim: codebook's prot_hidden_dim  [graph level]...
-    out_dim_g3: prot-liga interact graph hidden dim
-    d_FC_layer: fc layer dim
-    n_FC_layer: num fc layers
-    dropout: drop out
-    n_tasks: regression  affinity 
-    prot_na: config for protein na
-    liga_na: config for ligand na 
+    node_feat_size      : ligand graph node feat dim  (40 base + 25 QM-atom = 65)
+    edge_feat_size      : graph edge feat dimension
+    num_layers          : num GNN layers including GetContext
+    graph_feat_size     : hidden dimension for both protein and ligand
+    res_hidden_dim      : codebook protein hidden dim  [graph level]
+    out_dim_g3          : prot-liga interaction graph hidden dim
+    d_FC_layer          : FC layer dimension
+    n_FC_layer          : number of FC layers
+    dropout             : dropout rate
+    n_tasks             : regression target count (1 for affinity)
+    use_qm_mol_feats    : whether to fuse molecule-level QM scalars into FC
     """
     def __init__(self, param):
         super(DTIPredictor, self).__init__()
         self.param = param
+        self.use_qm_mol_feats = param.get('use_qm_mol_feats', True)
+
+        # ── Ligand node-feature projection (base=40 + QM-atom=25 → node_feat_size) ──
+        ligand_raw_dim = param['node_feat_size'] + QM_ATOM_FEAT_DIM  # 65
+        self.ligand_input_proj = nn.Sequential(
+            nn.Linear(ligand_raw_dim, param['node_feat_size']),
+            nn.LayerNorm(param['node_feat_size']),
+            nn.SiLU(),
+        )
+
         self.liga_conv = ModifiedAttentiveFPPredictorV2(param=self.param, type='liga')
         self.prot_conv = ModifiedAttentiveFPPredictorV2(param=self.param, type='prot')
 
         self.residue_embedding_fc = nn.Sequential(nn.Linear(self.param['prot_hidden_dim'] * 2, self.param['graph_feat_size']), 
                                                  nn.ReLU(),
                                                  nn.BatchNorm1d(self.param['graph_feat_size']))
-        
+
         # graph layers for ligand and protein interaction
         self.noncov_graph = DTIConvGraph3Layer(self.param, self.param['graph_feat_size'], self.param['outdim_g3'], self.param['dropout'])
 
-        # MLP predictor res_hidden_dim=128
-        self.FC = FC(self.param['outdim_g3']*2 + self.param['graph_feat_size'], self.param['d_FC_layer'], self.param['n_FC_layer'], self.param['dropout'], self.param['n_tasks'])
-        # self.FC = FC(outdim_g3*2, d_FC_layer, n_FC_layer, dropout, n_tasks)
+        # ── Molecule-level QM fusion MLP ────────────────────────────────────
+        if self.use_qm_mol_feats:
+            self.qm_mol_proj = nn.Sequential(
+                nn.Linear(QM_MOL_FEAT_DIM, 32),
+                nn.SiLU(),
+                nn.Linear(32, 32),
+            )
+            qm_mol_out = 32
+        else:
+            self.qm_mol_proj = None
+            qm_mol_out = 0
+
+        # MLP predictor: outdim_g3*2 (readout) + graph_feat_size (residue) + qm_mol_out
+        fc_in_dim = self.param['outdim_g3'] * 2 + self.param['graph_feat_size'] + qm_mol_out
+        self.FC = FC(fc_in_dim, self.param['d_FC_layer'], self.param['n_FC_layer'], self.param['dropout'], self.param['n_tasks'])
 
         # read out
         self.readout = EdgeWeightedSumAndMax(self.param['outdim_g3'])
@@ -346,16 +371,33 @@ class DTIPredictor(nn.Module):
     
     def forward(self, bg1, bg2, bg3, residue_feats):
         """
-        @param bg1: ligand graph
+        @param bg1: ligand graph  (node feat = 65: 40 base + 25 QM-atom;
+                                   ndata may also contain 'qm_mol' (N,7))
         @param bg2: pocket graph
         @param bg3: interact graph
-        @param residue_embedding residue graph readout (mirco environment) B, proteindim
+        @param residue_feats: residue graph readout (B, prot_hidden_dim)
         """
-        atom_feats1 = bg1.ndata.pop('h')
+        # ── Ligand node features (project 65 → node_feat_size) ────────────────
+        atom_feats1_raw = bg1.ndata.pop('h')   # (N_lig, 65)
+
+        # Pool molecule-level QM before we pop it (mean over atoms per graph)
+        if self.use_qm_mol_feats and 'qm_mol' in bg1.ndata:
+            qm_mol_node = bg1.ndata.pop('qm_mol')  # (N_lig_total, 7)
+            bg1.ndata['qm_mol_tmp'] = qm_mol_node
+            qm_mol_graph = dgl.mean_nodes(bg1, 'qm_mol_tmp')  # (B, 7)
+            bg1.ndata.pop('qm_mol_tmp')
+        else:
+            if 'qm_mol' in bg1.ndata:
+                bg1.ndata.pop('qm_mol')
+            qm_mol_graph = None
+
         bond_feats1 = bg1.edata.pop('e')
         atom_feats2 = bg2.ndata.pop('h')
         bond_feats2 = bg2.edata.pop('e')
-        # atom feats
+
+        atom_feats1 = self.ligand_input_proj(atom_feats1_raw)   # (N_lig, node_feat_size)
+
+        # atom feats GNN
         atom_feats1 = self.liga_conv(bg1, atom_feats1, bond_feats1)
         atom_feats2 = self.prot_conv(bg2, atom_feats2, bond_feats2)
         residue_feats = self.residue_embedding_fc(residue_feats)
@@ -372,8 +414,14 @@ class DTIPredictor(nn.Module):
         bond_feats3 = bg3.edata['e']
         bond_feats3 = self.noncov_graph(bg3, atom_feats3, bond_feats3)
 
-        readouts = self.readout(bg3, bond_feats3)
+        readouts = self.readout(bg3, bond_feats3)          # (B, outdim_g3*2)
         readouts = torch.cat([readouts, residue_feats], dim=1)
+
+        # ── Fuse molecule-level QM scalars ────────────────────────────────────
+        if self.use_qm_mol_feats and qm_mol_graph is not None:
+            qm_mol_emb = self.qm_mol_proj(qm_mol_graph)   # (B, 32)
+            readouts = torch.cat([readouts, qm_mol_emb], dim=1)
+
         return self.FC(readouts)
     
  

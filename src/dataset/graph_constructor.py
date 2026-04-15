@@ -2,7 +2,7 @@
 # @Author  : rylynn
 # @Email   : 
 # @File    : graph_constructor.py
-# @desc: graph constructor 
+# @desc: graph constructor
 from rdkit.Chem import rdmolfiles, rdmolops
 from rdkit import Chem
 import dgl
@@ -26,6 +26,46 @@ from itertools import repeat
 from torch.utils.data import Dataset
 warnings.filterwarnings('ignore')
 from utils.utils import *
+from dataset.qm_features import QMFeatureLoader, QM_ATOM_FEAT_DIM, QM_MOL_FEAT_DIM
+
+# ── Global QM loader (initialised once via init_qm_loader()) ─────────────────
+_QM_LOADER: QMFeatureLoader = None
+
+def init_qm_loader(hdf5_path: str):
+    """Call this once at the start of any script that builds graphs."""
+    global _QM_LOADER
+    _QM_LOADER = QMFeatureLoader(hdf5_path)
+    print(f"[QM] Loaded QM feature file: {hdf5_path}")
+
+def _get_qm_atom_feats(pdb_id: str, n_atoms: int) -> torch.Tensor:
+    """
+    Return per-atom QM features (n_atoms, QM_ATOM_FEAT_DIM).
+    Falls back to zeros when:
+      - QM loader not initialised
+      - PDB ID absent from the QM file
+      - Atom count mismatch
+    """
+    if _QM_LOADER is None:
+        return torch.zeros(n_atoms, QM_ATOM_FEAT_DIM)
+    arr = _QM_LOADER.get_atom_feats(pdb_id)
+    if arr is None:
+        return torch.zeros(n_atoms, QM_ATOM_FEAT_DIM)
+    # Align atom count: truncate or pad with zeros
+    if arr.shape[0] != n_atoms:
+        padded = np.zeros((n_atoms, QM_ATOM_FEAT_DIM), dtype=np.float32)
+        min_n = min(arr.shape[0], n_atoms)
+        padded[:min_n] = arr[:min_n]
+        arr = padded
+    return torch.tensor(arr, dtype=torch.float)
+
+def _get_qm_mol_feats(pdb_id: str) -> torch.Tensor:
+    """
+    Return molecule-level QM features (QM_MOL_FEAT_DIM,).
+    Falls back to zeros when QM loader not initialised or PDB absent.
+    """
+    if _QM_LOADER is None:
+        return torch.zeros(QM_MOL_FEAT_DIM)
+    return _QM_LOADER.get_mol_feats_tensor(pdb_id)
 
 def chirality(atom):  # the chirality手性 information defined in the AttentiveFP
     try:
@@ -171,8 +211,14 @@ def graphs_from_mol(dir, key, label, graph_dic_path, rasidue_dic_path, dis_thres
 
         # assign atom features
         # 'h', features of atoms
-        g1.ndata['h'] = AtomFeaturizer(mol1)['h']
+        base_h1 = AtomFeaturizer(mol1)['h']
+        qm_atom_h1 = _get_qm_atom_feats(key, num_atoms_m1)  # (N_ligand, 25)
+        g1.ndata['h'] = torch.cat([base_h1, qm_atom_h1], dim=-1)  # (N_ligand, 40+25=65)
         g2.ndata['h'] = AtomFeaturizer(mol2)['h']
+
+        # store molecule-level QM features on the ligand graph
+        qm_mol = _get_qm_mol_feats(key)  # (7,)
+        g1.ndata['qm_mol'] = qm_mol.unsqueeze(0).expand(num_atoms_m1, -1)  # broadcast to nodes
 
         # assign edge features
         # 'd', distance between ligand atoms
@@ -330,10 +376,20 @@ def graphs_from_mol_mul(dir, key, label, graph_dic_path, rasidue_dic_path, dis_t
         g3.add_edges(src_ls3, dst_ls3)
 
         # assign atom features
-        # 'h', features of atoms
-        g.ndata['h'] = torch.zeros(num_atoms, AtomFeaturizer.feat_size('h'))  # init 'h'
-        g.ndata['h'][:num_atoms_m1] = AtomFeaturizer(mol1)['h']
-        g.ndata['h'][-num_atoms_m2:] = AtomFeaturizer(mol2)['h']
+        # 'h', features of atoms (base) + QM atom features for ligand only
+        base_feat_size = AtomFeaturizer.feat_size('h')
+        total_feat_size = base_feat_size + QM_ATOM_FEAT_DIM
+        g.ndata['h'] = torch.zeros(num_atoms, total_feat_size)  # init 'h'
+        base_h1_mul = AtomFeaturizer(mol1)['h']
+        qm_atom_h1_mul = _get_qm_atom_feats(key, num_atoms_m1)
+        g.ndata['h'][:num_atoms_m1] = torch.cat([base_h1_mul, qm_atom_h1_mul], dim=-1)
+        # pocket atoms: base features only, QM columns left as zeros
+        g.ndata['h'][-num_atoms_m2:, :base_feat_size] = AtomFeaturizer(mol2)['h']
+
+        # molecule-level QM features broadcast to ligand nodes
+        qm_mol_mul = _get_qm_mol_feats(key)
+        g.ndata['qm_mol'] = torch.zeros(num_atoms, QM_MOL_FEAT_DIM)
+        g.ndata['qm_mol'][:num_atoms_m1] = qm_mol_mul.unsqueeze(0).expand(num_atoms_m1, -1)
 
         # assign edge features
         # 'd', distance between ligand atoms
@@ -537,7 +593,22 @@ class GraphsDataset(object):
         os.system(cmdline)
 
     def __getitem__(self, indx):
-        return self.graphs1[indx], self.graphs2[indx], self.graphs3[indx], self.residue_graph[indx], torch.tensor(self.labels[indx], dtype=torch.float), self.keys[indx]
+        g1 = self.graphs1[indx]
+        key = self.keys[indx]
+        # ── Runtime QM injection for pre-built graphs (g1.bin loaded from cache)
+        # graphs_from_mol() is skipped when g1.bin exists, so QM features
+        # must be appended here. Check shape to avoid double-injection.
+        if _QM_LOADER is not None:
+            h = g1.ndata.get('h')
+            if h is not None and h.shape[1] < 40 + QM_ATOM_FEAT_DIM:
+                n_total = g1.num_nodes()
+                qm_a = _get_qm_atom_feats(key, n_total)   # (N, 25); pocket rows = 0
+                g1.ndata['h'] = torch.cat([h, qm_a], dim=1)  # (N, 65)
+            if 'qm_mol' not in g1.ndata:
+                qm_m = _get_qm_mol_feats(key)              # (7,)
+                g1.ndata['qm_mol'] = qm_m.unsqueeze(0).expand(g1.num_nodes(), -1)
+        return g1, self.graphs2[indx], self.graphs3[indx], self.residue_graph[indx], \
+               torch.tensor(self.labels[indx], dtype=torch.float), key
 
     def __len__(self):
         return len(self.labels)

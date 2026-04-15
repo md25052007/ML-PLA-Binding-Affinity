@@ -79,6 +79,7 @@ def pretrain_vae(vae_config, device):
 def run_a_train_epoch(model, loss_fn, train_dataloader, optimizer, device, vae_model):
     loss_epoch = 0
     n = 0
+    nan_batches = 0
     model.train()
     for i_batch, batch in enumerate(train_dataloader):
         model.zero_grad()
@@ -86,14 +87,48 @@ def run_a_train_epoch(model, loss_fn, train_dataloader, optimizer, device, vae_m
         bg1, bg2, bg3, bg4, Ys = bg1.to(device), bg2.to(device), bg3.to(device), bg4.to(device), Ys.to(device)
         prot_embed = vae_model.Protein_Encoder.forward(vae_model.vq_layer, bg4).to(device)
         outputs = model(bg1, bg2, bg3, prot_embed)
-        loss = loss_fn(outputs, Ys)
-        loss_epoch += loss.item()
 
+        # ── NaN guard: log and SKIP the bad batch, do not crash the epoch ──
+        if torch.isnan(outputs).any() or torch.isinf(outputs).any():
+            h = bg1.ndata.get('h')
+            qm = bg1.ndata.get('qm_mol')
+            nan_batches += 1
+            if nan_batches <= 5:   # only print first 5 occurrences to avoid flooding
+                print(f"\n[WARN] NaN/Inf output at epoch={epoch} batch={i_batch} — skipping", flush=True)
+                print(f"  keys     : {list(keys)[:5]}", flush=True)
+                if h is not None:
+                    print(f"  bg1.h  : shape={tuple(h.shape)} max={h.abs().max().item():.3f} nan={torch.isnan(h).sum().item()}", flush=True)
+                if qm is not None:
+                    print(f"  bg1.qm : shape={tuple(qm.shape)} max={qm.abs().max().item():.3f} nan={torch.isnan(qm).sum().item()}", flush=True)
+                print(f"  prot   : max={prot_embed.abs().max().item():.3f} nan={torch.isnan(prot_embed).sum().item()}", flush=True)
+            optimizer.zero_grad()
+            continue  # skip — do NOT back-propagate NaN gradients
+        # ─────────────────────────────────────────────────────────────────────
+
+        loss = loss_fn(outputs, Ys)
+
+        if torch.isnan(loss) or torch.isinf(loss):
+            nan_batches += 1
+            if nan_batches <= 5:
+                print(f"\n[WARN] NaN/Inf loss at epoch={epoch} batch={i_batch} — skipping", flush=True)
+            optimizer.zero_grad()
+            continue  # skip — do NOT back-propagate NaN gradients
+
+        loss_epoch += loss.item()
         loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  # gradient clipping
         optimizer.step()
         n += 1
+
+    # ── If every batch was NaN (e.g. first epoch with bad init), return early ──
+    if n == 0:
+        print(f'epoch: {epoch}  loss: NaN (all {nan_batches} batches skipped due to NaN/Inf)', flush=True)
+        return
     loss_list.append(loss_epoch / n)
-    print('epoch:', epoch, ' loss:', loss_epoch / n)
+    if nan_batches > 0:
+        print(f'epoch: {epoch}  loss: {loss_epoch / n:.5f}  [{nan_batches} NaN batches skipped]', flush=True)
+    else:
+        print('epoch:', epoch, ' loss:', loss_epoch / n)
 
 
 def run_a_eval_epoch(model, validation_dataloader, device, vae_model):
@@ -117,6 +152,7 @@ if __name__ == '__main__':
     argparser = argparse.ArgumentParser()
     argparser.add_argument('--model_config_path', type=str, default='./configs/config.yaml')
     argparser.add_argument('--ckpt_path', type=str, default=None)
+    argparser.add_argument('--dti_ckpt_path', type=str, default=None, help="Path to resume DTI model training")
     args = argparser.parse_args()
 
     configs = load_config(args.model_config_path)
@@ -234,8 +270,13 @@ if __name__ == '__main__':
     DTIModel = DTIPredictor(param=configs)
 
     print('number of parameters : ', sum(p.numel() for p in DTIModel.parameters() if p.requires_grad))
-    print(DTIModel)
+    # print(DTIModel)
     DTIModel.to(device)
+    
+    if args.dti_ckpt_path and os.path.exists(args.dti_ckpt_path):
+        print(f"Loading previous DTI checkpoint from: {args.dti_ckpt_path}")
+        DTIModel.load_state_dict(torch.load(args.dti_ckpt_path, map_location=device))
+        
     optimizer = torch.optim.Adam(DTIModel.parameters(), lr=lr, weight_decay=l2)
     dti_model_dir = './model_save/{}/DTI/'.format(timestamp)
     check_writable(dti_model_dir)
@@ -261,6 +302,22 @@ if __name__ == '__main__':
         valid_true_flatten = np.concatenate([np.array(sub).flatten() for sub in valid_true])
         valid_pred_flatten = np.concatenate([np.array(sub).flatten() for sub in valid_pred])
 
+        # ── NaN-safe metrics: filter out any predictions that are NaN/Inf ──────
+        tr_mask = np.isfinite(train_pred_flatten) & np.isfinite(train_true_flatten)
+        va_mask = np.isfinite(valid_pred_flatten) & np.isfinite(valid_true_flatten)
+        n_tr_nan = (~tr_mask).sum()
+        n_va_nan = (~va_mask).sum()
+        if n_tr_nan > 0 or n_va_nan > 0:
+            print(f"[WARN] epoch:{epoch} — {n_tr_nan} train / {n_va_nan} valid preds are NaN/Inf (filtered out)",
+                  flush=True)
+        if tr_mask.sum() == 0 or va_mask.sum() == 0:
+            print(f"[WARN] epoch:{epoch} — no finite predictions; skipping epoch metrics.", flush=True)
+            continue
+        train_true_flatten = train_true_flatten[tr_mask]
+        train_pred_flatten = train_pred_flatten[tr_mask]
+        valid_true_flatten = valid_true_flatten[va_mask]
+        valid_pred_flatten = valid_pred_flatten[va_mask]
+        # ──────────────────────────────────────────────────────────────────────
 
         train_rmse = np.sqrt(mean_squared_error(train_true_flatten, train_pred_flatten))
         valid_rmse = np.sqrt(mean_squared_error(valid_true_flatten, valid_pred_flatten))
@@ -333,6 +390,22 @@ if __name__ == '__main__':
     pd_tr.to_csv('./stats/{}_trin.csv'.format(timestamp), index=False)
     pd_va.to_csv('./stats/{}_val.csv'.format(timestamp), index=False)
     pd_te.to_csv('./stats/{}_test.csv'.format(timestamp), index=False)
+
+    # ── NaN-safe: filter any remaining NaN/Inf in final predictions ───────
+    for _name, _true, _pred in [('train', train_true, train_pred),
+                                  ('valid', valid_true, valid_pred),
+                                  ('test',  test_true,  test_pred)]:
+        _m = np.isfinite(_pred) & np.isfinite(_true)
+        if (~_m).sum() > 0:
+            print(f"[WARN] Final eval: {(~_m).sum()} NaN/Inf in {_name} preds (filtered)", flush=True)
+    _ft = np.isfinite(train_pred) & np.isfinite(train_true)
+    train_true, train_pred = train_true[_ft], train_pred[_ft]
+    _fv = np.isfinite(valid_pred) & np.isfinite(valid_true)
+    valid_true, valid_pred = valid_true[_fv], valid_pred[_fv]
+    _fte = np.isfinite(test_pred) & np.isfinite(test_true)
+    test_true, test_pred = test_true[_fte], test_pred[_fte]
+    # ──────────────────────────────────────────────────────────────────────
+
     train_rmse, train_r2, train_mae, train_rp = np.sqrt(mean_squared_error(train_true, train_pred)), \
         r2_score(train_true, train_pred), \
         mean_absolute_error(train_true, train_pred), \

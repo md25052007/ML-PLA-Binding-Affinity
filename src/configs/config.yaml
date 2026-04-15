@@ -11,7 +11,7 @@ dropout: 0.0006281735692569256
 dropout_ratio: 0.009418851299803438
 edge_feat_size_2d: 12
 edge_feat_size_3d: 21
-epoches: 1000
+epochs: 1000
 gpuid: 0
 graph_feat_size: 256
 input_dim: 7
@@ -49,3 +49,8 @@ sce_scale: 1.9695896441305587
 seed: 4
 tolerance: 0.0
 weight_decay: 2.829698544627866e-05
+# ── MISATO QM feature settings ────────────────────────────────────────────────
+# Set qm_hdf5_path to the absolute path of your QM (1).hdf5 file.
+# Set use_qm_mol_feats: false to disable molecule-level QM fusion (keeps backward compat).
+qm_hdf5_path: C:\Users\donth\Desktop\ds-project\QM (1).hdf5
+use_qm_mol_feats: true
